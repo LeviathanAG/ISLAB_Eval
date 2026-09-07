@@ -1,0 +1,5 @@
+backend,algorithm,bytes,repeats,keygen_ms,encrypt_ms,decrypt_ms,overhead_bytes,public_json_bytes,private_json_bytes
+lib,rsa,1024,3,194.239396,0.600082,20.916675,629,651,1900
+lib,rsa,10240,3,194.239396,1.920152,22.210646,629,651,1900
+lib,ecc,1024,3,0.294766,0.598339,0.272875,274,182,264
+lib,ecc,10240,3,0.294766,1.959416,1.635415,274,182,264

@@ -1,0 +1,125 @@
+
+=== affine-known Recover affine keys from arbitrary matching text ===
+Candidates: [(5, 6)]
+
+=== caesar-frequency Rank all Caesar keys by English chi-squared score ===
+(71.45978258230483, 13, 'THEQUICKBROWNFOXJUMPSOVERTHELAZYDOGANDTHENRETURNSHOME')
+(129.61407592753656, 12, 'UIFRVJDLCSPXOGPYKVNQTPWFSUIFMBAZEPHBOEUIFOSFUVSOTIPNF')
+(132.1321378997192, 25, 'HVSEIWQYPFCKBTCLXIADGCJSFHVSZONMRCUOBRHVSBFSHIFBGVCAS')
+(154.5476621774292, 19, 'NBYKOCWEVLIQHZIRDOGJMIPYLNBYFUTSXIAUHXNBYHLYNOLHMBIGY')
+(190.44809622849556, 15, 'RFCOSGAIZPMULDMVHSKNQMTCPRFCJYXWBMEYLBRFCLPCRSPLQFMKC')
+
+=== vigenere-analysis Try key lengths, IC and frequency-derived keywords ===
+(1, 0.046171829339567504, 'L', 'SARGHHRXVRURHGTRHYCMBMBTGMNMWJDPVKEEDMHQGGNMUDABTLRSHZNKENP')
+(2, 0.053530377668308704, 'LJ', 'SCRIHJRZVTUTHITTHACOBOBVGONOWLDRVMEGDOHSGINOUFADTNRUHBNMEPP')
+(3, 0.05769980506822612, 'KEY', 'THEHOUSEISBEINGSOLDTONIGHTANDWEWILLRETURNTOTHEHOUSETOMORROW')
+(4, 0.05384615384615385, 'AQLX', 'DVRUSCRLGMUFSBTFSTCAMHBHRHNAHEDDGFESOHHERBNAFYAPEGRGSUNYPIP')
+(5, 0.030303030303030304, 'KLEZK', 'TAYSIIREHSVROSUSHFONCMIFHNNTIKEPCWFFDTTRHGUYVEAIFMSSOLOLEUB')
+(6, 0.05555555555555555, 'KEYKEY', 'THEHOUSEISBEINGSOLDTONIGHTANDWEWILLRETURNTOTHEHOUSETOMORROW')
+(7, 0.03741496598639456, 'WULOKKE', 'HRRDIIYMMRRSINIIHVDNIBSTDNOTLADMWLLTUMERHNCDUABCAAISEAORTEP')
+(8, 0.05952380952380952, 'YJYPOGLI', 'FCECEMRAITHNELTUUAPIYRBWTOAITODSIMRAARHTTIAIRIAEGNEOEENNRPC')
+(9, 0.06666666666666667, 'KTYKAAKEC', 'TSEHSSSEESMEIRESOHDEONMEHTWNOWEAGLLNEEURRROTDESOUWCTOIOCROA')
+(10, 0.02, 'ZJKRLKLFAJ', 'ECSAHIRDGTGTIATSHENONOCNGNNSHLPRWEEFDSSSSIOGUEAHENDUITNLETA')
+(11, 0.06363636363636363, 'OLYMKEJAKYT', 'PAEFIOTIWEMOHTSSOANNOEYTTLOTYUECNHERCNOSRHAERDNAUSTDIMFHEAO')
+(12, 0.06666666666666667, 'AELKOGUEYKYY', 'DHRHEMIEISHESNTSEDTTONOGRTNNTOUWILRROTHRDLETHENOESRTEEERROC')
+Statistical guesses, not guaranteed recovery; short messages may rank incorrectly.
+
+=== hill-known Recover a Hill matrix from independent known blocks ===
+Recovered matrix: [[3, 3], [2, 7]]
+
+=== hill-3x3 Larger Hill key and padding ===
+POH ACT
+
+=== playfair-edge Repeated X, repeated letters, odd length and J/I ===
+FDRIMHHFWRIEFAVY BALXLOONXQXIAZZX
+
+=== rail Rail-fence encryption/decryption ===
+WRIVDLANEAEDSOEE.FE TOC!  CR E E 
+Recovered: WE ARE DISCOVERED. FLEE AT ONCE!
+
+=== columnar Columnar transposition with duplicate keyword letters ===
+EIEECWDREN SD EAC.A! ELORO TEVF  
+Recovered: WE ARE DISCOVERED. FLEE AT ONCE!
+
+=== double-transposition Two successive columnar permutations ===
+S OEEEERCEDIWTFV ! EA.OANLRDE  C 
+Recovered: WE ARE DISCOVERED. FLEE AT ONCE!
+
+=== pipeline Affine then Vigenere then transposition; reverse order to decrypt ===
+TGGPXMRLECOGICAUQLZ INFORMATIONSECURITY
+
+=== aes-avalanche Flip one input bit and count changed ciphertext bits ===
+Changed bits out of 128: 65
+
+=== ecb-pattern Repeated plaintext blocks produce repeated ECB blocks ===
+['9f966aceece847cd3333bb0fd5306172', '9f966aceece847cd3333bb0fd5306172', '9f966aceece847cd3333bb0fd5306172']
+
+=== cbc-bitflip Changing the IV predictably changes first plaintext block ===
+b'admin=1;amount=10'
+
+=== ctr-reuse Recover second plaintext when CTR keystream is reused ===
+Recovered: b'Hidden secret 456'
+
+=== padding Valid and invalid PKCS#7; aligned input gets full padding block ===
+0 -> 16 10101010101010101010101010101010
+1 -> 16 410f0f0f0f0f0f0f0f0f0f0f0f0f0f0f
+16 -> 32 4141414141414141414141414141414110101010101010101010101010101010
+Invalid padding rejected
+
+=== authenticated-tamper Authenticated hybrid rejects modified ciphertext ===
+Tampering rejected before plaintext release
+
+=== gcm Library AES-GCM encryption and tag verification ===
+Recovered: b'Authenticated message'
+
+=== rsa-crt RSA CRT decryption equals modular exponentiation ===
+65
+
+=== rsa-common-modulus Recover raw RSA plaintext from two coprime exponents ===
+42
+
+=== rsa-shared-prime GCD finds a prime reused across RSA keys ===
+shared p: 1009 q1: 1013 q2: 1019
+
+=== rsa-small-message Integer-root recovery when raw RSA m^e < n ===
+42 True
+
+=== rsa-partial-prime Brute force a bounded number of missing prime bits ===
+(1009, 1013)
+
+=== rsa-fermat Factor close primes and recover the private key ===
+(1000003, 1000033)
+
+=== elgamal-reuse Known plaintext breaks a reused multiplicative mask ===
+90
+
+=== ec-elgamal-point Encrypt/decrypt a P-256 point: C1=kG,C2=M+kQ ===
+C1: (42276071628513674383047240254974540993296972064379881153812623256622894471242, 101259006184801379233475844542539393899229666431027308402843795862593511437787) 
+C2: (3321788483629329587842287421748671143391715991388841728465770746447671061494, 7451168314353633277624481988666420703098348849868026106126597237198668600317) 
+Recovered point: (46815746278116120727102909818790311888606566061375401374185894328395891209484, 27468372135271391475594175804425777961752385311825500239867916238362509316710)
+
+=== dh-mitm Unauthenticated DH permits two attacker-controlled secrets ===
+Alice/Eve secret: 12 Bob/Eve secret: 10 Identity authentication is missing.
+
+=== rabin-roots Show all four roots and the ambiguity ===
+[42, 67323, 205630, 272911]
+
+=== signature RSA-PSS verifies original and rejects changed document ===
+Original accepted; modified document rejected.
+
+=== hash-hmac SHA-256 digest versus keyed HMAC authentication ===
+SHA256: e95a8448fe0cd7312b87b2f2c2157c587e74f34510f19ca7ad1ae3c38aa0c6a9 HMAC-SHA256: f9a6c5c9551d43e57a90f2566bbd916234fe03c18c0ad27ec76932517e288d8e
+Anyone can recompute an unkeyed hash; only a key holder can create a valid HMAC.
+
+=== password-kdf Salted PBKDF2 derivation and verification ===
+salt: 9da3ced34ca502b04125f85c2b10ebe0 iterations: 600000 derived: 9910b427e853a829f64058a9ce4972c317413f7d497ba06941d84bde57f451f0
+
+=== access-policies RBAC, ABAC, Bell-LaPadula, DAC and time checks ===
+rbac {'read': True, 'write': True}
+abac {'read': True, 'write': True}
+blp {'read': True, 'write': False}
+dac {'read': False, 'write': False}
+time {'read': True, 'write': True}
+
+=== nonce-randomness Same message/key encrypts differently with fresh envelopes ===
+Two randomized envelopes differ and both decrypt: True

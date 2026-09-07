@@ -1,0 +1,3 @@
+backend,algorithm,bytes,repeats,keygen_ms,encrypt_ms,decrypt_ms,overhead_bytes,public_json_bytes,private_json_bytes
+lib,ec-elgamal,1024,3,0.287452,1.582696,1.021137,438,188,270
+lib,ec-elgamal,10240,3,0.287452,2.936078,2.38561,437,188,270

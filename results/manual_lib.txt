@@ -1,0 +1,283 @@
+
+=== L1Q1 Additive, multiplicative and affine encryption | lib ===
+Additive 
+  plaintext: I am learning information security 
+  ciphertext: CUGFYULHCHACHZILGUNCIHMYWOLCNS 
+  decrypted: IAMLEARNINGINFORMATIONSECURITY
+Multiplicative 
+  plaintext: I am learning information security 
+  ciphertext: QAYJIAVNQNMQNXCVYAZQCNKIEOVQZW 
+  decrypted: IAMLEARNINGINFORMATIONSECURITY
+Affine 
+  plaintext: I am learning information security 
+  ciphertext: KUSDCUPHKHGKHRWPSUTKWHECYIPKTQ 
+  decrypted: IAMLEARNINGINFORMATIONSECURITY
+
+=== L1Q2 Vigenere and plaintext autokey | lib ===
+Vigenere 
+  plaintext: the house is being sold tonight 
+  ciphertext: WVPSOLKHWDMEZFJGZWDKGQWRST 
+  decrypted: THEHOUSEISBEINGSOLDTONIGHT
+Autokey 
+  plaintext: the house is being sold tonight 
+  ciphertext: AALLVIMWMATFMVTYGZOWHBVONA 
+  decrypted: THEHOUSEISBEINGSOLDTONIGHT
+
+=== L1Q3 Playfair GUIDANCE | lib ===
+Playfair 
+  plaintext: The key is hidden under the door pad 
+  ciphertext: POCLBXDRLGIYIBCGBGLXPOBILZLTTGIY 
+  decrypted: THEKEYISHIDXDENUNDERTHEDOXORPADX
+Decryption retains inserted X/Q and I/J ambiguity.
+
+=== L1Q4 Hill 2x2 cipher | lib ===
+Interpreting flattened key as rows [[3,3],[2,7]], column-vector multiplication.
+Hill 
+  plaintext: We live in an insecure world 
+  ciphertext: AUFAXSLDNNLDOMOOLKEMGHAL 
+  decrypted: WELIVEINANINSECUREWORLDX
+
+=== L1Q5 Known-plaintext shift attack | lib ===
+Known-plaintext attack; shift: 4 tablet: TREASUSE
+
+=== L1Q6 Affine brute force with ab -> GL | lib ===
+Enumerated 312 valid affine keys; matching (a,b,plaintext): [(5, 6, 'THEBESTOFAFIGHTISMAKINGUPAKTERWARDS')]
+
+=== L1A1 Birthday-guided Caesar brute force | lib ===
+1 13 APWNRMEPYNF/YLBQRCEYLMEPYNFWYPCRUMQGBCQMBYA&OL
+1 12 BQXOSNFQZOG/ZMCRSDFZMNFQZOGXZQDSVNRHCDRNCZB&PM
+1 14 ZOVMQLDOXME/XKAPQBDXKLDOXMEVXOBQTLPFABPLAXZ&NK
+1 11 CRYPTOGRAPH/ANDSTEGANOGRAPHYARETWOSIDESODAC&QN
+1 15 YNULPKCNWLD/WJZOPACWJKCNWLDUWNAPSKOEZAOKZWY&MJ
+1 10 DSZQUPHSBQI/BOETUFHBOPHSBQIZBSFUXPTJEFTPEBD&RO
+1 16 XMTKOJBMVKC/VIYNOZBVIJBMVKCTVMZORJNDYZNJYVX&LI
+1 9 ETARVQITCRJ/CPFUVGICPQITCRJACTGVYQUKFGUQFCE&SP
+1 17 WLSJNIALUJB/UHXMNYAUHIALUJBSULYNQIMCXYMIXUW&KH
+1 8 FUBSWRJUDSK/DQGVWHJDQRJUDSKBDUHWZRVLGHVRGDF&TQ
+1 18 VKRIMHZKTIA/TGWLMXZTGHZKTIARTKXMPHLBWXLHWTV&JG
+1 7 GVCTXSKVETL/ERHWXIKERSKVETLCEVIXASWMHIWSHEG&UR
+1 19 UJQHLGYJSHZ/SFVKLWYSFGYJSHZQSJWLOGKAVWKGVSU&IF
+1 6 HWDUYTLWFUM/FSIXYJLFSTLWFUMDFWJYBTXNIJXTIFH&VS
+1 20 TIPGKFXIRGY/REUJKVXREFXIRGYPRIVKNFJZUVJFURT&HE
+1 5 IXEVZUMXGVN/GTJYZKMGTUMXGVNEGXKZCUYOJKYUJGI&WT
+1 21 SHOFJEWHQFX/QDTIJUWQDEWHQFXOQHUJMEIYTUIETQS&GD
+1 4 JYFWAVNYHWO/HUKZALNHUVNYHWOFHYLADVZPKLZVKHJ&XU
+1 22 RGNEIDVGPEW/PCSHITVPCDVGPEWNPGTILDHXSTHDSPR&FC
+1 3 KZGXBWOZIXP/IVLABMOIVWOZIXPGIZMBEWAQLMAWLIK&YV
+1 23 QFMDHCUFODV/OBRGHSUOBCUFODVMOFSHKCGWRSGCROQ&EB
+1 2 LAHYCXPAJYQ/JWMBCNPJWXPAJYQHJANCFXBRMNBXMJL&ZW
+1 24 PELCGBTENCU/NAQFGRTNABTENCULNERGJBFVQRFBQNP&DA
+1 1 MBIZDYQBKZR/KXNCDOQKXYQBKZRIKBODGYCSNOCYNKM&AX
+1 25 ODKBFASDMBT/MZPEFQSMZASDMBTKMDQFIAEUPQEAPMO&CZ
+1 0 NCJAEZRCLAS/LYODEPRLYZRCLASJLCPEHZDTOPDZOLN&BY
+Preserve / & punctuation; proximity to birthday orders guesses, does not prove a key.
+
+=== L1A2 Chosen-plaintext permutation inference | lib ===
+Literal manual: Not a transposition: symbol counts differ (manual has I changed to L)
+Assuming L is typo for I, compatible zero-based permutations: [[2, 0, 1, 3, 4, 7, 5, 6, 8]]
+Chosen-plaintext attack. Corrected sample fits a 9-character permutation; block size is not uniquely proven from one sample.
+
+=== L1A3 Vigenere HEALTH | lib ===
+Vigenere 
+  plaintext: Life is full of surprises 
+  ciphertext: SMFPBZMYLWHMZYRAKPZIS 
+  decrypted: LIFEISFULLOFSURPRISES
+
+=== L2Q1 DES message | lib ===
+Algorithm: DES mode: ECB key hex: 4131423243334434
+Plaintext: b'Confidential Data' 
+Ciphertext hex: 20089c56693b4b0a685304930baf3ed459a54a2e4ada7187 
+Recovered: b'Confidential Data'
+
+=== L2Q2 AES-128 message | lib ===
+Algorithm: AES mode: ECB key hex: 0123456789abcdef0123456789abcdef
+Plaintext: b'Sensitive Information' 
+Ciphertext hex: 99be7e3714ab880d4927596b5658130b055b7a63692d0df800228eed299a422c 
+Recovered: b'Sensitive Information'
+
+=== L2Q3 DES versus AES-256 timings | lib ===
+DES key bits 64 median encryption ms 0.022512 decryption ms 0.017643
+AES key bits 256 median encryption ms 0.01062 decryption ms 0.010069
+
+=== L2Q4 Triple DES repeated-key issue | lib ===
+Literal hex key is 24 bytes but K1=K2=K3: EDE collapses to DES. Direct DES3 library API rejects it.
+Algorithm: 3DES mode: ECB key hex: 1234567890abcdef1234567890abcdef1234567890abcdef
+Plaintext: b'Classified Text' 
+Ciphertext hex: 0e9d26c0517d4e28dfe6f5641c6c7b39 
+Recovered: b'Classified Text'
+Explicit replacement with distinct subkeys:
+Algorithm: 3DES mode: ECB key hex: 0123456789abcdeffedcba987654321089abcdef01234567
+Plaintext: b'Classified Text' 
+Ciphertext hex: d212e03d8eab4baf1ddd2e325642d6cb 
+Recovered: b'Classified Text'
+
+=== L2Q5 AES-192 correction and all round steps | lib ===
+Manual key has 16 hex bytes, not AES-192. Explicit repair: append FEDCBA9876543210 to obtain 24 bytes.
+Padded input: 546f7020536563726574204461746101
+round_key_00 fedcba9876543210fedcba9876543210
+round_key_01 fedcba9876543210dfff70a0a9ab42b0
+round_key_02 5777f8282123ca38dfff70a0a9ab42b0
+round_key_03 bfd397731678d5c3410f2deb602ce7d3
+round_key_04 bfd397731678d5c307d0b93411a86cf7
+round_key_05 50a7411c308ba6cf8f5831bc9920e47f
+round_key_06 b8b96bdaa911072df9b64631c93de0fe
+round_key_07 4665d142df45353dc62f4c446f3e4b69
+round_key_08 96880d585fb5eda619d03ce4c69509d9
+round_key_09 cc2e79f0a310329935983fc16a2dd267
+round_key_10 73fdee83b568e75ac9bac7256aaaf5bc
+round_key_11 5f32ca7d351f181a46e2f699f38a11c3
+round_key_12 3738e9285d921c9402a0d6e937bfcef3
+initial_add_round_key aab3cab8253151629ba89adc17205311
+01_sub_bytes ac6d746c3fc7d1aa14c2b886f0b7ed82
+01_shift_rows acc7b8823fc2ed6c14b774aaf06dd186
+01_mix_columns 2b689d8fa2e088b63457aeb01bc4b5a0
+01_add_round_key d5b42717d4b4baa6eba8de10b26ff710
+02_sub_bytes 038dccf0488df424e9c21dca37a868ca
+02_shift_rows 038d1dca48c268f0e9a8cc24378df4ca
+02_mix_columns 5deff11a559f5189c2c9ae0cdcfb0caf
+02_add_round_key 0a98093274bc9bb11d36deac75504e1f
+03_sub_bytes 67460123926514c8a4051d919d532fc0
+03_shift_rows 67651dc092052f23a45301c89d461491
+03_mix_columns bc4a634a3ccaacc16fc9b62e6ebc5bd7
+03_add_round_key 0399f4392ab279022ec69bc50e90bc04
+04_sub_bytes 7beebf12e537b67731b414a6ab6065f2
+04_shift_rows 7b3714f2e5b465123160bf77abeeb6a6
+04_mix_columns 49db6951612badc10a5cad62740bc3e9
+04_add_round_key f608fe22775378020d8c145665a3af1e
+05_sub_bytes 4230bb93f5edbc77d764fab14d0a7972
+05_shift_rows 42edfa72f5647993d70abb774d30bcb1
+05_mix_columns 20e4d635b725cd246762293dc743d622
+05_add_round_key 7043972987ae6bebe83a18815e63325d
+06_sub_bytes 511a88a517e47fe99b80ad0c58fb234c
+06_shift_rows 51e4ad4c178023a59bfb88e9581a7f0c
+06_mix_columns 7422202233cc25cb5a1c4b0cede1a895
+06_add_round_key cc9b4bf89add22e6a3aa0d3d24dc486b
+07_sub_bytes 4b14b341b8c1938e0aacd7273686527f
+07_shift_rows 4bc1d77fb8ac52410a86b38e36149327
+07_mix_columns 66cfbe35974c73afb85d782ce4977693
+07_add_round_key 20aa6f77480946927e7234688ba93dfa
+08_sub_bytes b7aca8f552015a4ff34018453dd3272d
+08_shift_rows b701182d524027f5f3d3a84f3dac5a45
+08_mix_columns 43b0f181b64e586074e2baeb8ad5ea3b
+08_add_round_key d538fcd9e9fbb5c66d32860f4c40e3e2
+09_sub_bytes 0307b0351e0fd5b43c23447629091198
+09_shift_rows 030f44981e2311353c09b0b42907d576
+09_mix_columns cb4937657d5e407a6751898ef8350545
+09_add_round_key 07674e95de4e72e352c9b64f9218d722
+10_sub_bytes c5852f2a1d2f401100dd4e844fad0e93
+10_shift_rows c52f4e931ddd0e2a00ad2f114f854084
+10_mix_columns 3ddad8086284a2a0d221c0a0ce1add07
+10_add_round_key 4e27368bd7ec45fa1b9b0785a4b028bb
+11_sub_bytes 2fcc053d0ece6e2daf14c59749e734ea
+11_shift_rows 2fcec5ea0e14343dafe7052d49cc6e97
+11_mix_columns 381655b5294735485f58355224effb4c
+11_add_round_key 67249fc81c582d5219bac3cbd765ea8f
+12_sub_bytes 8536dbe89c6ad800d4f42e1f0e4d8773
+12_shift_rows 856a2e739cf487e8d44ddb000e36d81f
+12_add_round_key b252c75bc1669b7cd6ed0de9398916ec
+Algorithm: AES mode: ECB key hex: fedcba9876543210fedcba9876543210fedcba9876543210
+Plaintext: b'Top Secret Data' 
+Ciphertext hex: b252c75bc1669b7cd6ed0de9398916ec 
+Recovered: b'Top Secret Data'
+
+=== L2A1 Five messages, four key sizes, five modes, CSV and graph | lib ===
+Saved results/symmetric_lib.csv
+Saved results/symmetric_lib.svg
+
+=== L2A2 DES hex blocks | lib ===
+Algorithm: DES mode: ECB key hex: a1b2c3d4e5f60708
+Plaintext: b'This is a confidential message' 
+Ciphertext hex: ca4174021e85fa3584ba263409f0e10bff0f049c24c44793185c80d14d7e490e 
+Recovered: b'This is a confidential message'
+Algorithm: DES mode: ECB key hex: a1b2c3d4e5f60708
+Plaintext: b'And this is the second block' 
+Ciphertext hex: 910563c86f7c68b6e2c16b7d18451a7c22e01379abcb8403ae6c9c9d19b3b798 
+Recovered: b'And this is the second block'
+These are multi-block messages; Mathematica appears to be a stray label.
+
+=== L2A3 AES-256 | lib ===
+Algorithm: AES mode: ECB key hex: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+Plaintext: b'Encryption Strength' 
+Ciphertext hex: 950bd5b8b9f399b41764f0237d81104bc4695ba3606748b0eba5b0c42b256db8 
+Recovered: b'Encryption Strength'
+
+=== L2A4 DES CBC | lib ===
+Algorithm: DES mode: CBC key hex: 4131423243334434
+Plaintext: b'Secure Communication' 
+Ciphertext hex: 248a096ffffb6459dc76a423b1b22f15f642b95a4bc1c307 
+Recovered: b'Secure Communication'
+
+=== L2A5 AES CTR | lib ===
+Algorithm: AES mode: CTR key hex: 0123456789abcdef0123456789abcdef
+Plaintext: b'Cryptography Lab Exercise' 
+Ciphertext hex: 3ad9bcb24c07caf6b2f8a61831460316e3a8bf8882f09ba12e 
+Recovered: b'Cryptography Lab Exercise'
+
+=== L3Q1 RSA-OAEP message | lib ===
+RSA-OAEP-SHA256 ciphertext: 477c462147745f0e80387e815b34709dd244182e26a2079e9b5191798c88d5339d35d46cbe3f448e76b8c55f47a4c92da91b473c10ee5759cf2733f474525698f090ef101a06cbbb36e9fe3b41e3889d9fd949316d267a48fdb24b217b937d71ec2671a0abd1c9145c4078a555b2841a77ec81cde19bd292f2ccd5a5bc113d39c7c67273ffd7ce35993920678e55058efc66dc958e5cccf09e829d23f43ba4df54e8fd02cdccdb5657d0a2548a2ff5df9f1fdfa27568b0a045c030235853d8a7e944e64a6a2d8b0e287194bf48dd94f4efaff058e8c6bcf9ee71022a9a1b7e7bfb17dba9a77716d0662a1611af7b02223962b26ecf8e3ebd601957adcdf7af0d 
+Recovered: Asymmetric Encryption
+
+=== L3Q2 ECC hybrid message | lib ===
+ecc encrypted envelope bytes: 294 recovered: Secure Transactions
+
+=== L3Q3 ElGamal message | lib ===
+Public key: (7919, 2, 3868) 
+Ciphertext: [(2067, 1210), (3982, 5203), (1699, 5701), (3468, 4843), (4237, 520), (7200, 6250), (1255, 7426), (6357, 7695), (3156, 7193), (4714, 995), (4981, 7818), (7664, 1789), (1410, 1059), (640, 6449), (6126, 5458), (7452, 2768), (5262, 1150)] 
+Recovered: Confidential Data
+
+=== L3Q4 RSA-2048/P-256 file benchmark | lib ===
+Quick sizes 1 KiB/10 KiB; use --full for required 1 MiB/10 MiB.
+rsa 1024 bytes: enc=0.600 ms dec=20.917 ms; verified
+rsa 10240 bytes: enc=1.920 ms dec=22.211 ms; verified
+ecc 1024 bytes: enc=0.598 ms dec=0.273 ms; verified
+ecc 10240 bytes: enc=1.959 ms dec=1.635 ms; verified
+Saved results/L3Q4_lib.csv
+
+=== L3Q5 DH key exchange and timings | lib ===
+Group14 2048-bit DH matched. Both peers combined: keygen ms 3.669512 exchange ms 36.336081
+
+=== L3A1 ElGamal inconsistent public/private pair | lib ===
+Manual h=6465 is inconsistent: pow(2,2999,7919)=3868. Correcting h to 3868, retaining private x.
+Public key: (7919, 2, 3868) 
+Ciphertext: [(3964, 5348), (6894, 6756), (730, 6871), (6492, 215), (2656, 141), (2063, 4763), (3152, 4391), (5886, 5964), (324, 366), (2190, 7206), (1072, 5400), (2090, 3184), (6062, 3729), (1444, 3573), (1280, 6096), (5344, 5025), (2418, 5711), (2569, 7147), (3357, 7722), (2978, 1017), (4257, 7021)] 
+Recovered: Asymmetric Algorithms
+
+=== L3A2 ECC hybrid message (repeat) | lib ===
+ecc encrypted envelope bytes: 293 recovered: Secure Transactions
+
+=== L3A3 Textbook RSA n=323,e=5,d=173 | lib ===
+n=17*19; phi=288; 5*173 mod 288 = 1 
+Ciphertext: [288, 190, 49, 6, 165, 42, 69, 190, 241, 6, 168, 22, 131, 223, 207, 190, 42, 165, 42, 131, 42, 109, 115] 
+Recovered: Cryptographic Protocols
+
+=== L3A4 Healthcare EC-ElGamal performance | lib ===
+ec-elgamal 1024 bytes: enc=1.583 ms dec=1.021 ms; verified
+ec-elgamal 10240 bytes: enc=2.936 ms dec=2.386 ms; verified
+Saved results/L3A4_lib.csv
+
+=== L3A5 RSA versus EC-ElGamal versus ECC performance | lib ===
+rsa 1024 bytes: enc=0.567 ms dec=21.187 ms; verified
+rsa 10240 bytes: enc=1.906 ms dec=22.638 ms; verified
+ec-elgamal 1024 bytes: enc=1.595 ms dec=1.033 ms; verified
+ec-elgamal 10240 bytes: enc=3.017 ms dec=2.453 ms; verified
+ecc 1024 bytes: enc=0.592 ms dec=0.266 ms; verified
+ecc 10240 bytes: enc=1.982 ms dec=1.663 ms; verified
+Saved results/L3A5_lib.csv
+
+=== L4Q1 SecureCorp RSA/DH, signatures and KMS | lib ===
+Authenticated RSA-PSS/DH channel and RSA-OAEP document: Finance report: approved procurement budget.
+Revoked HR key distribution denied; new subsystem enrolled.
+
+=== L4Q2 Healthcare Rabin centralized KMS | lib ===
+Cross-facility private-key request denied.
+Rabin record round-trip, revocation, replacement, scheduled-renewal callback, encrypted storage and audit passed.
+
+=== L4A1 ElGamal DRM, expiry, revocation and key export | lib ===
+Revoked customer denied by API.
+Manual master-key export demonstrated: copied key STILL decrypts offline after revocation.
+
+=== L4A2 Weak RSA factorization attack | lib ===
+trial p,q,d: 1009 1013 832193 recovered: b'Logistics' time ms: 0.138231
+fermat p,q,d: 1009 1013 832193 recovered: b'Logistics' time ms: 0.120226
+rho p,q,d: 1013 1009 832193 recovered: b'Logistics' time ms: 0.130676
+Small/close primes suffice for this attack; no partial private-key bits were specified in the manual.
