@@ -52,3 +52,27 @@ KMS answers should authenticate callers, enforce role/owner/expiry, encrypt
 private keys at rest, audit every operation, and revoke active versions. A
 customer who receives a master private key can keep an offline copy after API
 revocation; the service must distribute per-content keys instead.
+
+## Hashing
+
+The manual's custom function is DJB2-style: `h=5381`, then
+`h=((h<<5)+h)+character`, masked to 32 bits. It is a fast non-cryptographic
+hash. A cryptographic hash maps arbitrary bytes to a fixed digest and should
+resist preimages, second preimages, and collisions. MD5 and SHA-1 are retained
+only for the required comparison; use SHA-256 or stronger in new designs. A
+100-message experiment normally finds no collisions in any of them and does
+not prove security: an ideal n-bit hash reaches the birthday collision scale
+near `2^(n/2)` samples. A bare hash detects accidental changes only when the
+expected digest arrives through a trusted channel; use HMAC or a signature
+against an active attacker.
+
+## Digital signatures
+
+A signature hashes the message and applies private-key mathematics; verification
+uses the public key. It gives integrity, origin authentication, and usually
+non-repudiation, but no confidentiality. RSA-PSS is randomized and suitable for
+new RSA signatures. ElGamal, Schnorr, and DSA require a fresh unpredictable
+nonce for every signature; nonce reuse can expose the private key. Plain
+Diffie-Hellman is key agreement rather than a signature. To authenticate DH,
+sign the ephemeral public values or use a signature scheme such as DSA, which
+uses related discrete-log group mathematics.

@@ -1,4 +1,4 @@
-"""Run any of the 33 manual exercises: python lab.py L1Q1 --backend pure.
+"""Run any manual exercise from Labs 1-6: python lab.py L1Q1 --backend pure.
 Use --list for the full index, --all for all questions. Algorithms accept custom
 inputs through classical.py, symmetric.py, public_key.py, hybrid.py, variants.py.
 """
@@ -11,6 +11,10 @@ import public_key as p
 import hybrid
 import services
 import benchmarks
+import hashing
+import digital_signatures as ds
+import socket
+import threading
 
 QUESTIONS={
 'L1Q1':'Additive, multiplicative and affine encryption',
@@ -32,7 +36,15 @@ QUESTIONS={
 'L3A3':'Textbook RSA n=323,e=5,d=173', 'L3A4':'Healthcare EC-ElGamal performance',
 'L3A5':'RSA versus EC-ElGamal versus ECC performance',
 'L4Q1':'SecureCorp RSA/DH, signatures and KMS', 'L4Q2':'Healthcare Rabin centralized KMS',
-'L4A1':'ElGamal DRM, expiry, revocation and key export', 'L4A2':'Weak RSA factorization attack'
+'L4A1':'ElGamal DRM, expiry, revocation and key export', 'L4A2':'Weak RSA factorization attack',
+'L5Q1':'Manual 32-bit DJB2-style hash',
+'L5Q2':'Client/server integrity verification and tamper detection',
+'L5Q3':'MD5/SHA-1/SHA-256 timing and collision experiment',
+'L5A1':'Multipart socket transfer and integrity verification',
+'L6Q1':'ElGamal and Schnorr signing and verification',
+'L6Q2':'DH-style DSA signing and verification',
+'L6Q3':'Client/server RSA-PSS signed message',
+'L6A1':'CIA triad using RSA-OAEP, RSA-PSS, and SHA-256'
 }
 
 
@@ -159,6 +171,54 @@ def run(question,backend='pure',repeats=3,full=False):
             assert recovered==text
             print(method,'p,q,d:',u,v,d,'recovered:',recovered,'time ms:',(time.perf_counter_ns()-start)/1e6)
         print('Small/close primes suffice for this attack; no partial private-key bits were specified in the manual.')
+    elif question=='L5Q1':
+        text='Information Security'
+        print('Input:',text,'\n32-bit hash decimal:',hashing.manual_hash(text),'\nhex:',f'{hashing.manual_hash(text):08x}')
+    elif question in ('L5Q2','L5A1'):
+        left,right=socket.socketpair(); message=b'Integrity protected message'
+        parts=[message] if question=='L5Q2' else [message[:8],message[8:17],message[17:]]
+        def server():
+            request=hashing.receive_packet(right)
+            rebuilt=b''.join(bytes.fromhex(part) for part in request['parts'])
+            hashing.send_packet(right,{'sha256':hashing.digest(rebuilt),'bytes':len(rebuilt)})
+            right.close()
+        worker=threading.Thread(target=server); worker.start()
+        hashing.send_packet(left,{'parts':[part.hex() for part in parts]})
+        response=hashing.receive_packet(left); worker.join(); left.close()
+        local=hashing.digest(message)
+        print('parts:',len(parts),'server hash:',response['sha256'],'local hash:',local,'verified:',response['sha256']==local)
+        tampered=message+b'!'
+        print('tampered local hash:',hashing.digest(tampered),'verified:',response['sha256']==hashing.digest(tampered))
+    elif question=='L5Q3':
+        values=hashing.random_dataset(100,32)
+        for row in hashing.benchmark_hashes(values): print(row)
+        print('Zero observed collisions does not prove collision resistance; 100 samples are far below birthday bounds.')
+    elif question=='L6Q1':
+        message=b'Approved document'
+        x,y=ds.elgamal_keygen(); signature=ds.elgamal_sign(message,x)
+        print('ElGamal signature:',signature,'valid:',ds.elgamal_verify(message,signature,y),'tampered:',ds.elgamal_verify(message+b'!',signature,y))
+        x,y=ds.schnorr_keygen(); signature=ds.schnorr_sign(message,x)
+        print('Schnorr signature:',signature,'valid:',ds.schnorr_verify(message,signature,y),'tampered:',ds.schnorr_verify(message+b'!',signature,y))
+    elif question=='L6Q2':
+        message=b'Diffie-Hellman family signature'; x,y=ds.dsa_keygen(); signature=ds.dsa_sign(message,x)
+        print('Plain DH is key agreement, not a signature. DSA uses DH-style group math.')
+        print('DSA signature:',signature,'valid:',ds.dsa_verify(message,signature,y),'tampered:',ds.dsa_verify(message+b'!',signature,y))
+    elif question=='L6Q3':
+        private=p.rsa_key(2048,backend); public={'n':private['n'],'e':private['e']}
+        message=b'Signed client request'; signature=p.sign(message,private,backend)
+        left,right=socket.socketpair()
+        def signed_server():
+            request=hashing.receive_packet(right); data=bytes.fromhex(request['message']); sig=bytes.fromhex(request['signature'])
+            hashing.send_packet(right,{'valid':p.verify(data,sig,public,backend)}); right.close()
+        worker=threading.Thread(target=signed_server); worker.start()
+        hashing.send_packet(left,{'message':message.hex(),'signature':signature.hex()})
+        print('server response:',hashing.receive_packet(left)); worker.join(); left.close()
+    elif question=='L6A1':
+        private= p.rsa_key(2048,backend); public={'n':private['n'],'e':private['e']}; message=b'CIA demonstration'
+        ciphertext=p.oaep_encrypt(message,public,backend); signature=p.sign(ciphertext,private,backend)
+        print('Confidentiality: RSA-OAEP ciphertext bytes',len(ciphertext))
+        print('Integrity/authenticity: RSA-PSS over ciphertext valid =',p.verify(ciphertext,signature,public,backend))
+        recovered=p.oaep_decrypt(ciphertext,private,backend); print('Recovered:',recovered.decode(),'SHA-256:',hashing.digest(recovered))
 
 
 def main():
