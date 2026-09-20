@@ -1,5 +1,10 @@
 # IS lab exam pack
 
+For the new fully explained functions, including from-scratch AES/DES and Labs
+5-6, start at `../plug_and_play/README.md`.  For exact manual answers use
+`python ../lab.py --list` from this directory, or `python lab.py --list` from
+the repository root.
+
 One concept per file. Run from this directory, for example:
 
     python 01_classical/caesar.py
