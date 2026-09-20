@@ -22,6 +22,7 @@ vig = load("vig_explained", "plug_and_play/lab01_classical/vigenere_autokey.py")
 hill = load("hill_explained", "plug_and_play/lab01_classical/hill.py")
 elgamal = load("elgamal_explained", "plug_and_play/lab03_public_key/elgamal.py")
 dh = load("dh_explained", "plug_and_play/lab03_public_key/diffie_hellman.py")
+menu = load("symmetric_menu", "plug_and_play/lab02_block_ciphers/symmetric_menu.py")
 
 
 class TestKnownVectors(unittest.TestCase):
@@ -59,6 +60,13 @@ class TestRoundTrips(unittest.TestCase):
         b_private, b_public = dh.create_keypair(p, g)
         self.assertEqual(dh.shared_secret(b_public, a_private, p),
                          dh.shared_secret(a_public, b_private, p))
+
+    def test_menu_input_parsing(self):
+        self.assertEqual(menu.parse_hex("00 ff 10", "sample"), b"\x00\xff\x10")
+        self.assertEqual(menu.validate_key("AES", bytes(16)), bytes(16))
+        self.assertEqual(menu.validate_key("DES", bytes(8)), bytes(8))
+        with self.assertRaises(ValueError):
+            menu.validate_key("AES", bytes(15))
 
 
 if __name__ == "__main__":
