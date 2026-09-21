@@ -38,6 +38,8 @@ questions.
 |---|---|
 | `lab.py` | One command runs any exact manual exercise |
 | `plug_and_play/` | Copy-paste functions, formulas, constraints, and demos |
+| `plug_and_play/INPUT_AND_MENU_GUIDE.md` | Taking input, IVs, nonces, ciphertext and menu patterns |
+| `plug_and_play/generic_menu_skeleton.py` | Minimal reusable menu-driven program |
 | `question_bank/` | Ten question variations for every algorithm |
 | `notes/INPUT_RULES.md` | Key sizes, block sizes, IV/nonce and padding rules |
 | `notes/LIBRARY_REFERENCE.md` | PyCryptodome, cryptography, hashlib, SymPy APIs |
@@ -75,4 +77,3 @@ for timing graphs.
 - Lab 6 calls Diffie-Hellman an encryption/signature algorithm.  The answer
   explains that plain DH is key agreement and uses DSA/authenticated DH for the
   requested signing behavior.
-
