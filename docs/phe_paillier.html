@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>python-paillier &mdash; python-paillier 1.2.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="https://media.readthedocs.org/css/badge_only.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.2.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="https://media.readthedocs.org/javascript/jquery/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="https://media.readthedocs.org/javascript/jquery/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" src="https://media.readthedocs.org/javascript/underscore.js"></script>
+    <script type="text/javascript" src="https://media.readthedocs.org/javascript/doctools.js"></script>
+    <script type="text/javascript" src="https://media.readthedocs.org/javascript/readthedocs-doc-embed.js"></script>
+    <link rel="top" title="python-paillier 1.2.2 documentation" href="#" />
+    <link rel="next" title="Installation" href="installation.html" /> 
+  
+<!-- RTD Extra Head -->
+
+<!-- 
+Always link to the latest version, as canonical.
+http://docs.readthedocs.org/en/latest/canonical.html
+-->
+<link rel="canonical" href="http://python-paillier.readthedocs.io/en/stable/" />
+
+<link rel="stylesheet" href="https://media.readthedocs.org/css/readthedocs-doc-embed.css" type="text/css" />
+
+<script type="text/javascript" src="_static/readthedocs-data.js"></script>
+
+<!-- Add page-specific data, which must exist in the page js, not global -->
+<script type="text/javascript">
+READTHEDOCS_DATA['page'] = 'index'
+</script>
+
+<script type="text/javascript" src="_static/readthedocs-dynamic-include.js"></script>
+
+<!-- end RTD <extrahead> --><script async type="text/javascript" src="/_/static/javascript/readthedocs-addons.js"></script><meta name="readthedocs-project-slug" content="python-paillier" /><meta name="readthedocs-version-slug" content="develop" /><meta name="readthedocs-resolver-filename" content="/" /><meta name="readthedocs-http-status" content="200" /></head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">pyphe</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="python-paillier">
+<h1>python-paillier<a class="headerlink" href="#python-paillier" title="Permalink to this headline">¶</a></h1>
+<p>A Python 3 library for <strong>P</strong>artially <strong>H</strong>omomorphic <strong>E</strong>ncryption using the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Paillier_cryptosystem">Paillier crypto system</a>.</p>
+<p>The homomorphic properties of the Paillier crypto system are:</p>
+<ul class="simple">
+<li>Encrypted numbers can be multiplied by a non encrypted scalar.</li>
+<li>Encrypted numbers can be added together.</li>
+<li>Encrypted numbers can be added to non encrypted scalars.</li>
+</ul>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#using-pip">Using pip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#manual-installation">Manual installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#role-1">Role #1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#role-2">Role #2</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="serialisation.html">Serialisation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="serialisation.html#basic-json-serialisation">Basic JSON Serialisation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="serialisation.html#jwk-serialisation">JWK Serialisation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="caveats.html">Security Caveats</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="caveats.html#information-leakage">Information leakage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caveats.html#alternative-base-for-encodednumber">Alternative Base for EncodedNumber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caveats.html#no-audit">No audit</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Utility</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#usage-help">Usage Help</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#example-session">Example Session</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#bash-completion">Bash Completion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="phe.html">API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="phe.html#module-phe.paillier">Paillier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phe.html#module-phe.util">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phe.html#module-phe.command_line">CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="compatibility.html">Compatibility with other libraries</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="alternatives.html">Alternative Libraries</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">phe</span> <span class="kn">import</span> <span class="n">paillier</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">public_key</span><span class="p">,</span> <span class="n">private_key</span> <span class="o">=</span> <span class="n">paillier</span><span class="o">.</span><span class="n">generate_paillier_keypair</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">secret_number_list</span> <span class="o">=</span> <span class="p">[</span><span class="mf">3.141592653</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.6e-12</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encrypted_number_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">public_key</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">secret_number_list</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">private_key</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">encrypted_number_list</span><span class="p">]</span>
+<span class="go">[3.141592653, 300, -4.6e-12]</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="usage.html#usage"><span>Usage</span></a> for more extensive examples taking advantage of the homomorphic
+properties of the <em>paillier</em> cryptosystem.</p>
+<div class="admonition-documentation-generated admonition">
+<p class="first admonition-title">Documentation generated</p>
+<p class="last">June 02, 2016</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="#">
+              <img class="logo" src="_static/Magic-Logo.svg" alt="Logo"/>
+            </a></p>
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">python-paillier</a><ul>
+<li><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Next topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="next chapter">Installation</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             >next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">pyphe</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016,  DATA61 | CSIRO.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3.
+    </div>
+  </body>
+</html>

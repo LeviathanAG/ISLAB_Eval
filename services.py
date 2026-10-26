@@ -217,6 +217,7 @@ def healthcare(backend='pure',bits=1024):
         assert svc.renew_due(admin)==1
         assert svc.check_audit()
         print('Rabin record round-trip, revocation, replacement, scheduled-renewal callback, encrypted storage and audit passed.')
+        print('Rabin vs RSA: both rely on factoring; Rabin has simple encryption but four possible decryptions, while RSA uses an exponent and standard padding.')
         svc.close()
 
 

@@ -6,3 +6,4 @@ __pycache__/
 *.pem
 *.p12
 *.pfx
+solved_pyqs/data/

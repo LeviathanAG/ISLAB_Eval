@@ -1,0 +1,266 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Primitives &mdash; Cryptography 51.0.0-dev1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=6bfd0e6c"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/tabs.js?v=3ee01567"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <script src="../../_static/js/versions.js"></script>
+    <link rel="index" title="Index" href="../../genindex/" />
+    <link rel="search" title="Search" href="../../search/" />
+    <link rel="next" title="Authenticated encryption" href="aead/" />
+    <link rel="prev" title="X.509 Reference" href="../../x509/reference/" /> 
+<script async type="text/javascript" src="/_/static/javascript/readthedocs-addons.js"></script><meta name="readthedocs-project-slug" content="cryptography" /><meta name="readthedocs-version-slug" content="latest" /><meta name="readthedocs-resolver-filename" content="/hazmat/primitives/" /><meta name="readthedocs-http-status" content="200" /></head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="../../" class="icon icon-home">
+            Cryptography
+          </a>
+              <div class="switch-menus">
+                <div class="version-switch"></div>
+                <div class="language-switch"></div>
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<a href="https://github.com/pyca/cryptography" style="display:block;margin-top:8px;text-align:center;">View on GitHub</a>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">The recipes layer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../fernet/">Fernet (symmetric encryption)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cobblestone/">Cobblestone (streaming symmetric encryption)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../x509/">X.509</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The hazardous materials layer</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Primitives</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aead/">Authenticated encryption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asymmetric/">Asymmetric algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hpke/">HPKE (Hybrid Public Key Encryption)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constant-time/">Constant time functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="key-derivation-functions/">Key derivation functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="keywrap/">Key wrapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mac/">Message authentication codes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cryptographic-hashes/">Message digests (Hashing)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="symmetric-encryption/">Symmetric encryption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="padding/">Symmetric Padding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twofactor/">Two-factor authentication</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../exceptions/">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../random-numbers/">Random number generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../asn1/">ASN.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../decrepit/">Decrepit cryptography</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The cryptography open source project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog/">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq/">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../openssl/">Use of OpenSSL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../security/">Security</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../limitations/">Known security limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-stability/">API stability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doing-a-release/">Doing a release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../community/">Community</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary/">Glossary</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../statements/">Statements</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../">Cryptography</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Primitives</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/hazmat/primitives/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>
+This is a “Hazardous Materials” module. You should <strong>ONLY</strong> use it if you’re
+100% absolutely sure that you know what you’re doing because this module is
+full of land mines, dragons, and dinosaurs with laser guns.</p>
+</div>
+<section id="primitives">
+<h1>Primitives<a class="headerlink" href="#primitives" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="aead/">Authenticated encryption</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aead/#cryptography.hazmat.primitives.ciphers.aead.ChaCha20Poly1305"><code class="docutils literal notranslate"><span class="pre">ChaCha20Poly1305</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="aead/#cryptography.hazmat.primitives.ciphers.aead.AESGCM"><code class="docutils literal notranslate"><span class="pre">AESGCM</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="aead/#cryptography.hazmat.primitives.ciphers.aead.AESGCMSIV"><code class="docutils literal notranslate"><span class="pre">AESGCMSIV</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="aead/#cryptography.hazmat.primitives.ciphers.aead.AESOCB3"><code class="docutils literal notranslate"><span class="pre">AESOCB3</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="aead/#cryptography.hazmat.primitives.ciphers.aead.AESSIV"><code class="docutils literal notranslate"><span class="pre">AESSIV</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="aead/#cryptography.hazmat.primitives.ciphers.aead.AESCCM"><code class="docutils literal notranslate"><span class="pre">AESCCM</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="asymmetric/">Asymmetric algorithms</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="asymmetric/mldsa/">ML-DSA signing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asymmetric/mlkem/">ML-KEM key encapsulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asymmetric/ed25519/">Ed25519 signing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asymmetric/x25519/">X25519 key exchange</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asymmetric/ed448/">Ed448 signing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asymmetric/x448/">X448 key exchange</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asymmetric/ec/">Elliptic curve cryptography</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asymmetric/rsa/">RSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asymmetric/dh/">Diffie-Hellman key exchange</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asymmetric/dsa/">DSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asymmetric/serialization/">Key Serialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asymmetric/utils/">Asymmetric Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asymmetric/cloudhsm/">Cloud KMS and HSM Asymmetric Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asymmetric/#common-types">Common types</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hpke/">HPKE (Hybrid Public Key Encryption)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hpke/#cryptography.hazmat.primitives.hpke.Suite"><code class="docutils literal notranslate"><span class="pre">Suite</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="hpke/#cryptography.hazmat.primitives.hpke.KEM"><code class="docutils literal notranslate"><span class="pre">KEM</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="hpke/#cryptography.hazmat.primitives.hpke.MLKEM768X25519PrivateKey"><code class="docutils literal notranslate"><span class="pre">MLKEM768X25519PrivateKey</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="hpke/#cryptography.hazmat.primitives.hpke.MLKEM768X25519PublicKey"><code class="docutils literal notranslate"><span class="pre">MLKEM768X25519PublicKey</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="hpke/#cryptography.hazmat.primitives.hpke.MLKEM1024P384PrivateKey"><code class="docutils literal notranslate"><span class="pre">MLKEM1024P384PrivateKey</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="hpke/#cryptography.hazmat.primitives.hpke.MLKEM1024P384PublicKey"><code class="docutils literal notranslate"><span class="pre">MLKEM1024P384PublicKey</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="hpke/#cryptography.hazmat.primitives.hpke.KDF"><code class="docutils literal notranslate"><span class="pre">KDF</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="hpke/#cryptography.hazmat.primitives.hpke.AEAD"><code class="docutils literal notranslate"><span class="pre">AEAD</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="constant-time/">Constant time functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="constant-time/#cryptography.hazmat.primitives.constant_time.bytes_eq"><code class="docutils literal notranslate"><span class="pre">bytes_eq()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="key-derivation-functions/">Key derivation functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="key-derivation-functions/#variable-cost-algorithms">Variable cost algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="key-derivation-functions/#fixed-cost-algorithms">Fixed cost algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="key-derivation-functions/#interface">Interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="keywrap/">Key wrapping</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="keywrap/#cryptography.hazmat.primitives.keywrap.aes_key_wrap"><code class="docutils literal notranslate"><span class="pre">aes_key_wrap()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="keywrap/#cryptography.hazmat.primitives.keywrap.aes_key_unwrap"><code class="docutils literal notranslate"><span class="pre">aes_key_unwrap()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="keywrap/#cryptography.hazmat.primitives.keywrap.aes_key_wrap_with_padding"><code class="docutils literal notranslate"><span class="pre">aes_key_wrap_with_padding()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="keywrap/#cryptography.hazmat.primitives.keywrap.aes_key_unwrap_with_padding"><code class="docutils literal notranslate"><span class="pre">aes_key_unwrap_with_padding()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="keywrap/#exceptions">Exceptions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mac/">Message authentication codes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mac/cmac/">Cipher-based message authentication code (CMAC)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mac/hmac/">Hash-based message authentication codes (HMAC)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mac/poly1305/">Poly1305</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cryptographic-hashes/">Message digests (Hashing)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cryptographic-hashes/#cryptography.hazmat.primitives.hashes.Hash"><code class="docutils literal notranslate"><span class="pre">Hash</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cryptographic-hashes/#cryptography.hazmat.primitives.hashes.XOFHash"><code class="docutils literal notranslate"><span class="pre">XOFHash</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cryptographic-hashes/#sha-2-family">SHA-2 family</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cryptographic-hashes/#blake2">BLAKE2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cryptographic-hashes/#sha-3-family">SHA-3 family</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cryptographic-hashes/#sha-1">SHA-1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cryptographic-hashes/#md5">MD5</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cryptographic-hashes/#sm3">SM3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cryptographic-hashes/#extendable-output-functions">Extendable Output Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cryptographic-hashes/#interfaces">Interfaces</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="symmetric-encryption/">Symmetric encryption</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="symmetric-encryption/#cryptography.hazmat.primitives.ciphers.Cipher"><code class="docutils literal notranslate"><span class="pre">Cipher</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="symmetric-encryption/#algorithms">Algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="symmetric-encryption/#module-cryptography.hazmat.primitives.ciphers.modes">Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="symmetric-encryption/#interfaces">Interfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="symmetric-encryption/#exceptions">Exceptions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="padding/">Symmetric Padding</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="padding/#cryptography.hazmat.primitives.padding.PKCS7"><code class="docutils literal notranslate"><span class="pre">PKCS7</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="padding/#cryptography.hazmat.primitives.padding.ANSIX923"><code class="docutils literal notranslate"><span class="pre">ANSIX923</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="padding/#cryptography.hazmat.primitives.padding.PaddingContext"><code class="docutils literal notranslate"><span class="pre">PaddingContext</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="twofactor/">Two-factor authentication</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="twofactor/#cryptography.hazmat.primitives.twofactor.InvalidToken"><code class="docutils literal notranslate"><span class="pre">InvalidToken</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="twofactor/#id1">HOTP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twofactor/#id2">TOTP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="twofactor/#provisioning-uri">Provisioning URI</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../../x509/reference/" class="btn btn-neutral float-left" title="X.509 Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="aead/" class="btn btn-neutral float-right" title="Authenticated encryption" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2013-2026, Individual Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,196 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exceptions &mdash; Cryptography 51.0.0-dev1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=6bfd0e6c"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script src="../_static/js/theme.js"></script>
+    <script src="../_static/js/versions.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="Random number generation" href="../random-numbers/" />
+    <link rel="prev" title="Two-factor authentication" href="../hazmat/primitives/twofactor/" /> 
+<script async type="text/javascript" src="/_/static/javascript/readthedocs-addons.js"></script><meta name="readthedocs-project-slug" content="cryptography" /><meta name="readthedocs-version-slug" content="latest" /><meta name="readthedocs-resolver-filename" content="/exceptions/" /><meta name="readthedocs-http-status" content="200" /></head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="../" class="icon icon-home">
+            Cryptography
+          </a>
+              <div class="switch-menus">
+                <div class="version-switch"></div>
+                <div class="language-switch"></div>
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<a href="https://github.com/pyca/cryptography" style="display:block;margin-top:8px;text-align:center;">View on GitHub</a>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">The recipes layer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../fernet/">Fernet (symmetric encryption)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cobblestone/">Cobblestone (streaming symmetric encryption)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../x509/">X.509</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The hazardous materials layer</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../hazmat/primitives/">Primitives</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Exceptions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#cryptography.exceptions.UnsupportedAlgorithm"><code class="docutils literal notranslate"><span class="pre">UnsupportedAlgorithm</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cryptography.exceptions.AlreadyFinalized"><code class="docutils literal notranslate"><span class="pre">AlreadyFinalized</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cryptography.exceptions.InvalidSignature"><code class="docutils literal notranslate"><span class="pre">InvalidSignature</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cryptography.exceptions.NotYetFinalized"><code class="docutils literal notranslate"><span class="pre">NotYetFinalized</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cryptography.exceptions.AlreadyUpdated"><code class="docutils literal notranslate"><span class="pre">AlreadyUpdated</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cryptography.exceptions.InvalidKey"><code class="docutils literal notranslate"><span class="pre">InvalidKey</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../random-numbers/">Random number generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hazmat/asn1/">ASN.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hazmat/decrepit/">Decrepit cryptography</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The cryptography open source project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog/">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../openssl/">Use of OpenSSL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../security/">Security</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../limitations/">Known security limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-stability/">API stability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doing-a-release/">Doing a release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../community/">Community</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary/">Glossary</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../statements/">Statements</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">Cryptography</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Exceptions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/exceptions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="exceptions">
+<h1>Exceptions<a class="headerlink" href="#exceptions" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.exceptions.UnsupportedAlgorithm">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.exceptions.</span></span><span class="sig-name descname"><span class="pre">UnsupportedAlgorithm</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/exceptions.py#L17-L20"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.exceptions.UnsupportedAlgorithm" title="Link to this definition"></a></dt>
+<dd><p>Raised when the requested algorithm, or combination of algorithms is not
+supported.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.exceptions.AlreadyFinalized">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.exceptions.</span></span><span class="sig-name descname"><span class="pre">AlreadyFinalized</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/exceptions.py#L23-L24"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.exceptions.AlreadyFinalized" title="Link to this definition"></a></dt>
+<dd><p>This is raised when a context is used after being finalized.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.exceptions.InvalidSignature">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.exceptions.</span></span><span class="sig-name descname"><span class="pre">InvalidSignature</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/exceptions.py#L39-L40"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.exceptions.InvalidSignature" title="Link to this definition"></a></dt>
+<dd><p>This is raised when signature verification fails. This can occur with
+HMAC or asymmetric key signature validation.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.exceptions.NotYetFinalized">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.exceptions.</span></span><span class="sig-name descname"><span class="pre">NotYetFinalized</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/exceptions.py#L31-L32"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.exceptions.NotYetFinalized" title="Link to this definition"></a></dt>
+<dd><p>This is raised when the AEAD tag property is accessed on a context
+before it is finalized.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.exceptions.AlreadyUpdated">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.exceptions.</span></span><span class="sig-name descname"><span class="pre">AlreadyUpdated</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/exceptions.py#L27-L28"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.exceptions.AlreadyUpdated" title="Link to this definition"></a></dt>
+<dd><p>This is raised when additional data is added to a context after update
+has already been called.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.exceptions.InvalidKey">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.exceptions.</span></span><span class="sig-name descname"><span class="pre">InvalidKey</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/exceptions.py#L51-L52"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.exceptions.InvalidKey" title="Link to this definition"></a></dt>
+<dd><p>This is raised when the verify method of a key derivation function’s
+computed key does not match the expected key.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../hazmat/primitives/twofactor/" class="btn btn-neutral float-left" title="Two-factor authentication" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../random-numbers/" class="btn btn-neutral float-right" title="Random number generation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2013-2026, Individual Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

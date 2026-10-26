@@ -1,0 +1,1213 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RSA &mdash; Cryptography 51.0.0-dev1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/tabs.css?v=4c969af8" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=6bfd0e6c"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/tabs.js?v=3ee01567"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <script src="../../../../_static/js/versions.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex/" />
+    <link rel="search" title="Search" href="../../../../search/" />
+    <link rel="next" title="Diffie-Hellman key exchange" href="../dh/" />
+    <link rel="prev" title="Elliptic curve cryptography" href="../ec/" /> 
+<script async type="text/javascript" src="/_/static/javascript/readthedocs-addons.js"></script><meta name="readthedocs-project-slug" content="cryptography" /><meta name="readthedocs-version-slug" content="latest" /><meta name="readthedocs-resolver-filename" content="/hazmat/primitives/asymmetric/rsa/" /><meta name="readthedocs-http-status" content="200" /></head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="../../../../" class="icon icon-home">
+            Cryptography
+          </a>
+              <div class="switch-menus">
+                <div class="version-switch"></div>
+                <div class="language-switch"></div>
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<a href="https://github.com/pyca/cryptography" style="display:block;margin-top:8px;text-align:center;">View on GitHub</a>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">The recipes layer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../fernet/">Fernet (symmetric encryption)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cobblestone/">Cobblestone (streaming symmetric encryption)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../x509/">X.509</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The hazardous materials layer</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../">Primitives</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../aead/">Authenticated encryption</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../">Asymmetric algorithms</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../mldsa/">ML-DSA signing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../mlkem/">ML-KEM key encapsulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ed25519/">Ed25519 signing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../x25519/">X25519 key exchange</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ed448/">Ed448 signing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../x448/">X448 key exchange</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ec/">Elliptic curve cryptography</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">RSA</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#generation">Generation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#key-loading">Key loading</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#key-serialization">Key serialization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#signing">Signing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#verification">Verification</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#encryption">Encryption</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#decryption">Decryption</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-cryptography.hazmat.primitives.asymmetric.padding">Padding</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#numbers">Numbers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#handling-partial-rsa-private-keys">Handling partial RSA private keys</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#key-interfaces">Key interfaces</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../dh/">Diffie-Hellman key exchange</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../dsa/">DSA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../serialization/">Key Serialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/">Asymmetric Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../cloudhsm/">Cloud KMS and HSM Asymmetric Keys</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../#common-types">Common types</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../hpke/">HPKE (Hybrid Public Key Encryption)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../constant-time/">Constant time functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../key-derivation-functions/">Key derivation functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../keywrap/">Key wrapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../mac/">Message authentication codes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../cryptographic-hashes/">Message digests (Hashing)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../symmetric-encryption/">Symmetric encryption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../padding/">Symmetric Padding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../twofactor/">Two-factor authentication</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../exceptions/">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../random-numbers/">Random number generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../asn1/">ASN.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../decrepit/">Decrepit cryptography</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The cryptography open source project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation/">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../changelog/">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../faq/">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../development/">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../openssl/">Use of OpenSSL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../security/">Security</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../limitations/">Known security limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api-stability/">API stability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doing-a-release/">Doing a release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../community/">Community</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../glossary/">Glossary</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../statements/">Statements</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../">Cryptography</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../">Primitives</a></li>
+          <li class="breadcrumb-item"><a href="../">Asymmetric algorithms</a></li>
+      <li class="breadcrumb-item active">RSA</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/hazmat/primitives/asymmetric/rsa.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>
+This is a “Hazardous Materials” module. You should <strong>ONLY</strong> use it if you’re
+100% absolutely sure that you know what you’re doing because this module is
+full of land mines, dragons, and dinosaurs with laser guns.</p>
+</div>
+<section id="module-cryptography.hazmat.primitives.asymmetric.rsa">
+<span id="rsa"></span><h1>RSA<a class="headerlink" href="#module-cryptography.hazmat.primitives.asymmetric.rsa" title="Link to this heading"></a></h1>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/RSA_(cryptosystem)">RSA</a> is a <a class="reference external" href="https://en.wikipedia.org/wiki/Public-key_cryptography">public-key</a> algorithm for encrypting and signing messages.</p>
+<section id="generation">
+<h2>Generation<a class="headerlink" href="#generation" title="Link to this heading"></a></h2>
+<p>Unlike symmetric cryptography, where the key is typically just a random series
+of bytes, RSA keys have a complex internal structure with <a class="reference external" href="https://en.wikipedia.org/wiki/RSA_(cryptosystem)#Key_generation">specific
+mathematical properties</a>.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.generate_private_key">
+<span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.asymmetric.rsa.</span></span><span class="sig-name descname"><span class="pre">generate_private_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">public_exponent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_size</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/rsa.py#L164-L170"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.generate_private_key" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.5.</span></p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 3.0: </span>Tightened restrictions on <code class="docutils literal notranslate"><span class="pre">public_exponent</span></code>.</p>
+</div>
+<p>Generates a new RSA private key.
+<code class="docutils literal notranslate"><span class="pre">key_size</span></code> describes how many <a class="reference internal" href="../../../../glossary/#term-bits"><span class="xref std std-term">bits</span></a> long the key should be. Larger
+keys provide more security; currently <code class="docutils literal notranslate"><span class="pre">1024</span></code> and below are considered
+breakable while <code class="docutils literal notranslate"><span class="pre">2048</span></code> or <code class="docutils literal notranslate"><span class="pre">4096</span></code> are reasonable default key sizes for
+new keys. The <code class="docutils literal notranslate"><span class="pre">public_exponent</span></code> indicates what one mathematical property
+of the key generation will be. Unless you have a specific reason to do
+otherwise, you should always <a class="reference external" href="https://www.daemonology.net/blog/2009-06-11-cryptographic-right-answers.html">use 65537</a>.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">cryptography.hazmat.primitives.asymmetric</span><span class="w"> </span><span class="kn">import</span> <span class="n">rsa</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">private_key</span> <span class="o">=</span> <span class="n">rsa</span><span class="o">.</span><span class="n">generate_private_key</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">public_exponent</span><span class="o">=</span><span class="mi">65537</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">key_size</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>public_exponent</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – The public exponent of the new key.
+Either 65537 or 3 (for legacy purposes). Almost everyone should
+<a class="reference external" href="https://www.daemonology.net/blog/2009-06-11-cryptographic-right-answers.html">use 65537</a>.</p></li>
+<li><p><strong>key_size</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – The length of the modulus in <a class="reference internal" href="../../../../glossary/#term-bits"><span class="xref std std-term">bits</span></a>. For keys
+generated in 2015 it is strongly recommended to be
+<a class="reference external" href="https://www.cosic.esat.kuleuven.be/ecrypt/ecrypt2/documents/D.SPA.20.pdf">at least 2048</a> (See page 41). It must not be less than 512.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An instance of
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey" title="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">RSAPrivateKey</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="key-loading">
+<h2>Key loading<a class="headerlink" href="#key-loading" title="Link to this heading"></a></h2>
+<p>If you already have an on-disk key in the PEM format (which are recognizable by
+the distinctive <code class="docutils literal notranslate"><span class="pre">-----BEGIN</span> <span class="pre">{format}-----</span></code> and <code class="docutils literal notranslate"><span class="pre">-----END</span> <span class="pre">{format}-----</span></code>
+markers), you can load it:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">cryptography.hazmat.primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">serialization</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"path/to/key.pem"</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">key_file</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">private_key</span> <span class="o">=</span> <span class="n">serialization</span><span class="o">.</span><span class="n">load_pem_private_key</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">key_file</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span>
+<span class="gp">... </span>        <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="p">)</span>
+</pre></div>
+</div>
+<p>Serialized keys may optionally be encrypted on disk using a password. In this
+example we loaded an unencrypted key, and therefore we did not provide a
+password. If the key is encrypted we can pass a <code class="docutils literal notranslate"><span class="pre">bytes</span></code> object as the
+<code class="docutils literal notranslate"><span class="pre">password</span></code> argument.</p>
+<p>There is also support for <a class="reference internal" href="../serialization/#cryptography.hazmat.primitives.serialization.load_ssh_public_key" title="cryptography.hazmat.primitives.serialization.load_ssh_public_key"><code class="xref py py-func docutils literal notranslate"><span class="pre">loading</span> <span class="pre">public</span> <span class="pre">keys</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">SSH</span> <span class="pre">format</span></code></a>.</p>
+</section>
+<section id="key-serialization">
+<h2>Key serialization<a class="headerlink" href="#key-serialization" title="Link to this heading"></a></h2>
+<p>If you have a private key that you’ve loaded you can use
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey.private_bytes" title="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey.private_bytes"><code class="xref py py-meth docutils literal notranslate"><span class="pre">private_bytes()</span></code></a>
+to serialize the key.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">cryptography.hazmat.primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">serialization</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pem</span> <span class="o">=</span> <span class="n">private_key</span><span class="o">.</span><span class="n">private_bytes</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">encoding</span><span class="o">=</span><span class="n">serialization</span><span class="o">.</span><span class="n">Encoding</span><span class="o">.</span><span class="n">PEM</span><span class="p">,</span>
+<span class="gp">... </span>   <span class="nb">format</span><span class="o">=</span><span class="n">serialization</span><span class="o">.</span><span class="n">PrivateFormat</span><span class="o">.</span><span class="n">PKCS8</span><span class="p">,</span>
+<span class="gp">... </span>   <span class="n">encryption_algorithm</span><span class="o">=</span><span class="n">serialization</span><span class="o">.</span><span class="n">BestAvailableEncryption</span><span class="p">(</span><span class="sa">b</span><span class="s1">'mypassword'</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pem</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">b'-----BEGIN ENCRYPTED PRIVATE KEY-----'</span>
+</pre></div>
+</div>
+<p>It is also possible to serialize without encryption using
+<a class="reference internal" href="../serialization/#cryptography.hazmat.primitives.serialization.NoEncryption" title="cryptography.hazmat.primitives.serialization.NoEncryption"><code class="xref py py-class docutils literal notranslate"><span class="pre">NoEncryption</span></code></a>.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pem</span> <span class="o">=</span> <span class="n">private_key</span><span class="o">.</span><span class="n">private_bytes</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">encoding</span><span class="o">=</span><span class="n">serialization</span><span class="o">.</span><span class="n">Encoding</span><span class="o">.</span><span class="n">PEM</span><span class="p">,</span>
+<span class="gp">... </span>   <span class="nb">format</span><span class="o">=</span><span class="n">serialization</span><span class="o">.</span><span class="n">PrivateFormat</span><span class="o">.</span><span class="n">TraditionalOpenSSL</span><span class="p">,</span>
+<span class="gp">... </span>   <span class="n">encryption_algorithm</span><span class="o">=</span><span class="n">serialization</span><span class="o">.</span><span class="n">NoEncryption</span><span class="p">()</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pem</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">b'-----BEGIN RSA PRIVATE KEY-----'</span>
+</pre></div>
+</div>
+<p>For public keys you can use
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey.public_bytes" title="cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey.public_bytes"><code class="xref py py-meth docutils literal notranslate"><span class="pre">public_bytes()</span></code></a>
+to serialize the key.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">cryptography.hazmat.primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">serialization</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">public_key</span> <span class="o">=</span> <span class="n">private_key</span><span class="o">.</span><span class="n">public_key</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pem</span> <span class="o">=</span> <span class="n">public_key</span><span class="o">.</span><span class="n">public_bytes</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">encoding</span><span class="o">=</span><span class="n">serialization</span><span class="o">.</span><span class="n">Encoding</span><span class="o">.</span><span class="n">PEM</span><span class="p">,</span>
+<span class="gp">... </span>   <span class="nb">format</span><span class="o">=</span><span class="n">serialization</span><span class="o">.</span><span class="n">PublicFormat</span><span class="o">.</span><span class="n">SubjectPublicKeyInfo</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pem</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">b'-----BEGIN PUBLIC KEY-----'</span>
+</pre></div>
+</div>
+</section>
+<section id="signing">
+<h2>Signing<a class="headerlink" href="#signing" title="Link to this heading"></a></h2>
+<p>A private key can be used to sign a message. This allows anyone with the public
+key to verify that the message was created by someone who possesses the
+corresponding private key. RSA signatures require a specific hash function, and
+padding to be used. Here is an example of signing <code class="docutils literal notranslate"><span class="pre">message</span></code> using RSA, with a
+secure hash function and padding:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">cryptography.hazmat.primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">hashes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">cryptography.hazmat.primitives.asymmetric</span><span class="w"> </span><span class="kn">import</span> <span class="n">padding</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">message</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"A message I want to sign"</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">signature</span> <span class="o">=</span> <span class="n">private_key</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">message</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">padding</span><span class="o">.</span><span class="n">PSS</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">mgf</span><span class="o">=</span><span class="n">padding</span><span class="o">.</span><span class="n">MGF1</span><span class="p">(</span><span class="n">hashes</span><span class="o">.</span><span class="n">SHA256</span><span class="p">()),</span>
+<span class="gp">... </span>        <span class="n">salt_length</span><span class="o">=</span><span class="n">padding</span><span class="o">.</span><span class="n">PSS</span><span class="o">.</span><span class="n">MAX_LENGTH</span>
+<span class="gp">... </span>    <span class="p">),</span>
+<span class="gp">... </span>    <span class="n">hashes</span><span class="o">.</span><span class="n">SHA256</span><span class="p">()</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Valid paddings for signatures are
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.padding.PSS" title="cryptography.hazmat.primitives.asymmetric.padding.PSS"><code class="xref py py-class docutils literal notranslate"><span class="pre">PSS</span></code></a> and
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.padding.PKCS1v15" title="cryptography.hazmat.primitives.asymmetric.padding.PKCS1v15"><code class="xref py py-class docutils literal notranslate"><span class="pre">PKCS1v15</span></code></a>. <code class="docutils literal notranslate"><span class="pre">PSS</span></code>
+is the recommended choice for any new protocols or applications, <code class="docutils literal notranslate"><span class="pre">PKCS1v15</span></code>
+should only be used to support legacy protocols.</p>
+<p>If your data is too large to be passed in a single call, you can hash it
+separately and pass that value using
+<a class="reference internal" href="../utils/#cryptography.hazmat.primitives.asymmetric.utils.Prehashed" title="cryptography.hazmat.primitives.asymmetric.utils.Prehashed"><code class="xref py py-class docutils literal notranslate"><span class="pre">Prehashed</span></code></a>.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">cryptography.hazmat.primitives.asymmetric</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chosen_hash</span> <span class="o">=</span> <span class="n">hashes</span><span class="o">.</span><span class="n">SHA256</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hasher</span> <span class="o">=</span> <span class="n">hashes</span><span class="o">.</span><span class="n">Hash</span><span class="p">(</span><span class="n">chosen_hash</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="sa">b</span><span class="s2">"data &amp; "</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="sa">b</span><span class="s2">"more data"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">digest</span> <span class="o">=</span> <span class="n">hasher</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sig</span> <span class="o">=</span> <span class="n">private_key</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">digest</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">padding</span><span class="o">.</span><span class="n">PSS</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">mgf</span><span class="o">=</span><span class="n">padding</span><span class="o">.</span><span class="n">MGF1</span><span class="p">(</span><span class="n">hashes</span><span class="o">.</span><span class="n">SHA256</span><span class="p">()),</span>
+<span class="gp">... </span>        <span class="n">salt_length</span><span class="o">=</span><span class="n">padding</span><span class="o">.</span><span class="n">PSS</span><span class="o">.</span><span class="n">MAX_LENGTH</span>
+<span class="gp">... </span>    <span class="p">),</span>
+<span class="gp">... </span>    <span class="n">utils</span><span class="o">.</span><span class="n">Prehashed</span><span class="p">(</span><span class="n">chosen_hash</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="verification">
+<h2>Verification<a class="headerlink" href="#verification" title="Link to this heading"></a></h2>
+<p>The previous section describes what to do if you have a private key and want to
+sign something. If you have a public key, a message, a signature, and the
+signing algorithm that was used you can check that the private key associated
+with a given public key was used to sign that specific message.  You can obtain
+a public key to use in verification using
+<a class="reference internal" href="../serialization/#cryptography.hazmat.primitives.serialization.load_pem_public_key" title="cryptography.hazmat.primitives.serialization.load_pem_public_key"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_pem_public_key()</span></code></a>,
+<a class="reference internal" href="../serialization/#cryptography.hazmat.primitives.serialization.load_der_public_key" title="cryptography.hazmat.primitives.serialization.load_der_public_key"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_der_public_key()</span></code></a>,
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicNumbers.public_key" title="cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicNumbers.public_key"><code class="xref py py-meth docutils literal notranslate"><span class="pre">public_key()</span></code></a>
+, or
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey.public_key" title="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey.public_key"><code class="xref py py-meth docutils literal notranslate"><span class="pre">public_key()</span></code></a>.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">public_key</span> <span class="o">=</span> <span class="n">private_key</span><span class="o">.</span><span class="n">public_key</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">public_key</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">signature</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">message</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">padding</span><span class="o">.</span><span class="n">PSS</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">mgf</span><span class="o">=</span><span class="n">padding</span><span class="o">.</span><span class="n">MGF1</span><span class="p">(</span><span class="n">hashes</span><span class="o">.</span><span class="n">SHA256</span><span class="p">()),</span>
+<span class="gp">... </span>        <span class="n">salt_length</span><span class="o">=</span><span class="n">padding</span><span class="o">.</span><span class="n">PSS</span><span class="o">.</span><span class="n">MAX_LENGTH</span>
+<span class="gp">... </span>    <span class="p">),</span>
+<span class="gp">... </span>    <span class="n">hashes</span><span class="o">.</span><span class="n">SHA256</span><span class="p">()</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If the signature does not match, <code class="docutils literal notranslate"><span class="pre">verify()</span></code> will raise an
+<a class="reference internal" href="../../../../exceptions/#cryptography.exceptions.InvalidSignature" title="cryptography.exceptions.InvalidSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">InvalidSignature</span></code></a> exception.</p>
+<p>If your data is too large to be passed in a single call, you can hash it
+separately and pass that value using
+<a class="reference internal" href="../utils/#cryptography.hazmat.primitives.asymmetric.utils.Prehashed" title="cryptography.hazmat.primitives.asymmetric.utils.Prehashed"><code class="xref py py-class docutils literal notranslate"><span class="pre">Prehashed</span></code></a>.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chosen_hash</span> <span class="o">=</span> <span class="n">hashes</span><span class="o">.</span><span class="n">SHA256</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hasher</span> <span class="o">=</span> <span class="n">hashes</span><span class="o">.</span><span class="n">Hash</span><span class="p">(</span><span class="n">chosen_hash</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="sa">b</span><span class="s2">"data &amp; "</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="sa">b</span><span class="s2">"more data"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">digest</span> <span class="o">=</span> <span class="n">hasher</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">public_key</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">sig</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">digest</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">padding</span><span class="o">.</span><span class="n">PSS</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">mgf</span><span class="o">=</span><span class="n">padding</span><span class="o">.</span><span class="n">MGF1</span><span class="p">(</span><span class="n">hashes</span><span class="o">.</span><span class="n">SHA256</span><span class="p">()),</span>
+<span class="gp">... </span>        <span class="n">salt_length</span><span class="o">=</span><span class="n">padding</span><span class="o">.</span><span class="n">PSS</span><span class="o">.</span><span class="n">MAX_LENGTH</span>
+<span class="gp">... </span>    <span class="p">),</span>
+<span class="gp">... </span>    <span class="n">utils</span><span class="o">.</span><span class="n">Prehashed</span><span class="p">(</span><span class="n">chosen_hash</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="encryption">
+<h2>Encryption<a class="headerlink" href="#encryption" title="Link to this heading"></a></h2>
+<p>RSA encryption is interesting because encryption is performed using the
+<strong>public</strong> key, meaning anyone can encrypt data. The data is then decrypted
+using the <strong>private</strong> key.</p>
+<p>Like signatures, RSA supports encryption with several different padding
+options. Here’s an example using a secure padding and hash function:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">message</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"encrypted data"</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ciphertext</span> <span class="o">=</span> <span class="n">public_key</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">message</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">padding</span><span class="o">.</span><span class="n">OAEP</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">mgf</span><span class="o">=</span><span class="n">padding</span><span class="o">.</span><span class="n">MGF1</span><span class="p">(</span><span class="n">algorithm</span><span class="o">=</span><span class="n">hashes</span><span class="o">.</span><span class="n">SHA256</span><span class="p">()),</span>
+<span class="gp">... </span>        <span class="n">algorithm</span><span class="o">=</span><span class="n">hashes</span><span class="o">.</span><span class="n">SHA256</span><span class="p">(),</span>
+<span class="gp">... </span>        <span class="n">label</span><span class="o">=</span><span class="kc">None</span>
+<span class="gp">... </span>    <span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Valid paddings for encryption are
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.padding.OAEP" title="cryptography.hazmat.primitives.asymmetric.padding.OAEP"><code class="xref py py-class docutils literal notranslate"><span class="pre">OAEP</span></code></a> and
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.padding.PKCS1v15" title="cryptography.hazmat.primitives.asymmetric.padding.PKCS1v15"><code class="xref py py-class docutils literal notranslate"><span class="pre">PKCS1v15</span></code></a>. <code class="docutils literal notranslate"><span class="pre">OAEP</span></code>
+is the recommended choice for any new protocols or applications, <code class="docutils literal notranslate"><span class="pre">PKCS1v15</span></code>
+should only be used to support legacy protocols.</p>
+</section>
+<section id="decryption">
+<h2>Decryption<a class="headerlink" href="#decryption" title="Link to this heading"></a></h2>
+<p>Once you have an encrypted message, it can be decrypted using the private key:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">plaintext</span> <span class="o">=</span> <span class="n">private_key</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">ciphertext</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">padding</span><span class="o">.</span><span class="n">OAEP</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">mgf</span><span class="o">=</span><span class="n">padding</span><span class="o">.</span><span class="n">MGF1</span><span class="p">(</span><span class="n">algorithm</span><span class="o">=</span><span class="n">hashes</span><span class="o">.</span><span class="n">SHA256</span><span class="p">()),</span>
+<span class="gp">... </span>        <span class="n">algorithm</span><span class="o">=</span><span class="n">hashes</span><span class="o">.</span><span class="n">SHA256</span><span class="p">(),</span>
+<span class="gp">... </span>        <span class="n">label</span><span class="o">=</span><span class="kc">None</span>
+<span class="gp">... </span>    <span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plaintext</span> <span class="o">==</span> <span class="n">message</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</section>
+<section id="module-cryptography.hazmat.primitives.asymmetric.padding">
+<span id="padding"></span><h2>Padding<a class="headerlink" href="#module-cryptography.hazmat.primitives.asymmetric.padding" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.asymmetric.padding.</span></span><span class="sig-name descname"><span class="pre">AsymmetricPadding</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/_asymmetric.py#L13-L19"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.2.</span></p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.padding.PSS">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.asymmetric.padding.</span></span><span class="sig-name descname"><span class="pre">PSS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mgf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">salt_length</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/padding.py#L38-L75"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.padding.PSS" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.3.</span></p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.4: </span>Added <code class="docutils literal notranslate"><span class="pre">salt_length</span></code> parameter.</p>
+</div>
+<p>PSS (Probabilistic Signature Scheme) is a signature scheme defined in
+<span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc3447.html"><strong>RFC 3447</strong></a>. It is more complex than PKCS1 but possesses a <a class="reference external" href="https://eprint.iacr.org/2001/062.pdf">security proof</a>.
+This is the <a class="reference external" href="https://www.daemonology.net/blog/2009-06-11-cryptographic-right-answers.html">recommended padding algorithm</a> for RSA signatures. It cannot
+be used with RSA encryption.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mgf</strong> – A mask generation function object. At this time the only
+supported MGF is <a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.padding.MGF1" title="cryptography.hazmat.primitives.asymmetric.padding.MGF1"><code class="xref py py-class docutils literal notranslate"><span class="pre">MGF1</span></code></a>.</p></li>
+<li><p><strong>salt_length</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – The length of the salt. It is recommended that this
+be set to <code class="docutils literal notranslate"><span class="pre">PSS.DIGEST_LENGTH</span></code> or <code class="docutils literal notranslate"><span class="pre">PSS.MAX_LENGTH</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.padding.PSS.MAX_LENGTH">
+<span class="sig-name descname"><span class="pre">MAX_LENGTH</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.padding.PSS.MAX_LENGTH" title="Link to this definition"></a></dt>
+<dd><p>Pass this attribute to <code class="docutils literal notranslate"><span class="pre">salt_length</span></code> to get the maximum salt length
+available.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.padding.PSS.DIGEST_LENGTH">
+<span class="sig-name descname"><span class="pre">DIGEST_LENGTH</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.padding.PSS.DIGEST_LENGTH" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 37.0.0.</span></p>
+</div>
+<p>Pass this attribute to <code class="docutils literal notranslate"><span class="pre">salt_length</span></code> to set the salt length to the
+byte length of the digest passed when calling <code class="docutils literal notranslate"><span class="pre">sign</span></code>. Note that this
+is <strong>not</strong> the length of the digest passed to <code class="docutils literal notranslate"><span class="pre">MGF1</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.padding.PSS.AUTO">
+<span class="sig-name descname"><span class="pre">AUTO</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.padding.PSS.AUTO" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 37.0.0.</span></p>
+</div>
+<p>Pass this attribute to <code class="docutils literal notranslate"><span class="pre">salt_length</span></code> to automatically determine the
+salt length when verifying. Raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if used when signing.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.padding.PSS.mgf">
+<span class="sig-name descname"><span class="pre">mgf</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.padding.PSS.mgf" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.padding.MGF" title="cryptography.hazmat.primitives.asymmetric.padding.MGF"><code class="xref py py-class docutils literal notranslate"><span class="pre">MGF</span></code></a></p>
+</dd>
+</dl>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 42.0.0.</span></p>
+</div>
+<p>The padding’s mask generation function (MGF).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.padding.OAEP">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.asymmetric.padding.</span></span><span class="sig-name descname"><span class="pre">OAEP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mgf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/padding.py#L78-L110"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.padding.OAEP" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.4.</span></p>
+</div>
+<p>OAEP (Optimal Asymmetric Encryption Padding) is a padding scheme defined in
+<span class="target" id="index-1"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc3447.html"><strong>RFC 3447</strong></a>. It provides probabilistic encryption and is <a class="reference external" href="https://cseweb.ucsd.edu/~mihir/papers/oaep.pdf">proven secure</a>
+against several attack types. This is the <a class="reference external" href="https://www.daemonology.net/blog/2009-06-11-cryptographic-right-answers.html">recommended padding algorithm</a>
+for RSA encryption. It cannot be used with RSA signing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mgf</strong> – A mask generation function object. At this time the only
+supported MGF is <a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.padding.MGF1" title="cryptography.hazmat.primitives.asymmetric.padding.MGF1"><code class="xref py py-class docutils literal notranslate"><span class="pre">MGF1</span></code></a>.</p></li>
+<li><p><strong>algorithm</strong> – An instance of
+<a class="reference internal" href="../../cryptographic-hashes/#cryptography.hazmat.primitives.hashes.HashAlgorithm" title="cryptography.hazmat.primitives.hashes.HashAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">HashAlgorithm</span></code></a>.</p></li>
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><em>bytes</em></a>) – A label to apply. This is a rarely used field and
+should typically be set to <code class="docutils literal notranslate"><span class="pre">None</span></code> or <code class="docutils literal notranslate"><span class="pre">b&quot;&quot;</span></code>, which are equivalent.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.padding.OAEP.algorithm">
+<span class="sig-name descname"><span class="pre">algorithm</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.padding.OAEP.algorithm" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../cryptographic-hashes/#cryptography.hazmat.primitives.hashes.HashAlgorithm" title="cryptography.hazmat.primitives.hashes.HashAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">HashAlgorithm</span></code></a></p>
+</dd>
+</dl>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 42.0.0.</span></p>
+</div>
+<p>The padding’s hash algorithm.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.padding.OAEP.mgf">
+<span class="sig-name descname"><span class="pre">mgf</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.padding.OAEP.mgf" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.padding.MGF" title="cryptography.hazmat.primitives.asymmetric.padding.MGF"><code class="xref py py-class docutils literal notranslate"><span class="pre">MGF</span></code></a></p>
+</dd>
+</dl>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 42.0.0.</span></p>
+</div>
+<p>The padding’s mask generation function (MGF).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.padding.PKCS1v15">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.asymmetric.padding.</span></span><span class="sig-name descname"><span class="pre">PKCS1v15</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/padding.py#L16-L23"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.padding.PKCS1v15" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.3.</span></p>
+</div>
+<p>PKCS1 v1.5 (also known as simply PKCS1) is a simple padding scheme
+developed for use with RSA keys. It is defined in <span class="target" id="index-2"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc3447.html"><strong>RFC 3447</strong></a>. This padding
+can be used for signing and encryption.</p>
+<p>It is not recommended that <code class="docutils literal notranslate"><span class="pre">PKCS1v15</span></code> be used for new applications,
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.padding.OAEP" title="cryptography.hazmat.primitives.asymmetric.padding.OAEP"><code class="xref py py-class docutils literal notranslate"><span class="pre">OAEP</span></code></a> should be preferred for encryption and <a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.padding.PSS" title="cryptography.hazmat.primitives.asymmetric.padding.PSS"><code class="xref py py-class docutils literal notranslate"><span class="pre">PSS</span></code></a> should be
+preferred for signatures.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>When used with OpenSSL 3.2 or older, our implementation of PKCS1 v1.5
+decryption is not constant time. See <a class="reference internal" href="../../../../limitations/"><span class="doc">Known security limitations</span></a> for details.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.padding.calculate_max_pss_salt_length">
+<span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.asymmetric.padding.</span></span><span class="sig-name descname"><span class="pre">calculate_max_pss_salt_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hash_algorithm</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/padding.py#L131-L141"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.padding.calculate_max_pss_salt_length" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 1.5.</span></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – An RSA public or private key.</p></li>
+<li><p><strong>hash_algorithm</strong> – A
+<a class="reference internal" href="../../cryptographic-hashes/#cryptography.hazmat.primitives.hashes.HashAlgorithm" title="cryptography.hazmat.primitives.hashes.HashAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">cryptography.hazmat.primitives.hashes.HashAlgorithm</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns int<span class="colon">:</span></dt>
+<dd class="field-even"><p>The computed salt length.</p>
+</dd>
+</dl>
+<p>Computes the length of the salt that <a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.padding.PSS" title="cryptography.hazmat.primitives.asymmetric.padding.PSS"><code class="xref py py-class docutils literal notranslate"><span class="pre">PSS</span></code></a> will use if
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.padding.PSS.MAX_LENGTH" title="cryptography.hazmat.primitives.asymmetric.padding.PSS.MAX_LENGTH"><code class="xref py py-data docutils literal notranslate"><span class="pre">PSS.MAX_LENGTH</span></code></a> is used.</p>
+</dd></dl>
+
+<section id="mask-generation-functions">
+<h3>Mask generation functions<a class="headerlink" href="#mask-generation-functions" title="Link to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.padding.MGF">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.asymmetric.padding.</span></span><span class="sig-name descname"><span class="pre">MGF</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/padding.py#L113-L114"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.padding.MGF" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 37.0.0.</span></p>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.padding.MGF1">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.asymmetric.padding.</span></span><span class="sig-name descname"><span class="pre">MGF1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algorithm</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/padding.py#L117-L128"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.padding.MGF1" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.3.</span></p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.6: </span>Removed the deprecated <code class="docutils literal notranslate"><span class="pre">salt_length</span></code> parameter.</p>
+</div>
+<p>MGF1 (Mask Generation Function 1) is used as the mask generation function
+in <a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.padding.PSS" title="cryptography.hazmat.primitives.asymmetric.padding.PSS"><code class="xref py py-class docutils literal notranslate"><span class="pre">PSS</span></code></a> and <a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.padding.OAEP" title="cryptography.hazmat.primitives.asymmetric.padding.OAEP"><code class="xref py py-class docutils literal notranslate"><span class="pre">OAEP</span></code></a> padding. It takes a hash algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>algorithm</strong> – An instance of
+<a class="reference internal" href="../../cryptographic-hashes/#cryptography.hazmat.primitives.hashes.HashAlgorithm" title="cryptography.hazmat.primitives.hashes.HashAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">HashAlgorithm</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+<section id="numbers">
+<h2>Numbers<a class="headerlink" href="#numbers" title="Link to this heading"></a></h2>
+<p>These classes hold the constituent components of an RSA key. They are useful
+only when more traditional <a class="reference internal" href="../serialization/"><span class="doc">Key Serialization</span></a>
+is unavailable.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicNumbers">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.asymmetric.rsa.</span></span><span class="sig-name descname"><span class="pre">RSAPublicNumbers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/rsa.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicNumbers" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.5.</span></p>
+</div>
+<p>The collection of integers that make up an RSA public key.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicNumbers.n">
+<span class="sig-name descname"><span class="pre">n</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicNumbers.n" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
+<p>The public modulus.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicNumbers.e">
+<span class="sig-name descname"><span class="pre">e</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicNumbers.e" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
+<p>The public exponent.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicNumbers.public_key">
+<span class="sig-name descname"><span class="pre">public_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicNumbers.public_key" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A new instance of
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey" title="cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">RSAPublicKey</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.asymmetric.rsa.</span></span><span class="sig-name descname"><span class="pre">RSAPrivateNumbers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmp1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmq1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iqmp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">public_numbers</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/rsa.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.5.</span></p>
+</div>
+<p>The collection of integers that make up an RSA private key.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>With the exception of the integers contained in the
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicNumbers" title="cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicNumbers"><code class="xref py py-class docutils literal notranslate"><span class="pre">RSAPublicNumbers</span></code></a> all attributes of this class must be kept
+secret. Revealing them will compromise the security of any
+cryptographic operations performed with a key loaded from them.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers.public_numbers">
+<span class="sig-name descname"><span class="pre">public_numbers</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers.public_numbers" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicNumbers" title="cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicNumbers"><code class="xref py py-class docutils literal notranslate"><span class="pre">RSAPublicNumbers</span></code></a></p>
+</dd>
+</dl>
+<p>The <a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicNumbers" title="cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicNumbers"><code class="xref py py-class docutils literal notranslate"><span class="pre">RSAPublicNumbers</span></code></a> which makes up the RSA public key
+associated with this RSA private key.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers.p">
+<span class="sig-name descname"><span class="pre">p</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers.p" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
+<p><code class="docutils literal notranslate"><span class="pre">p</span></code>, one of the two primes composing <code class="docutils literal notranslate"><span class="pre">n</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers.q">
+<span class="sig-name descname"><span class="pre">q</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers.q" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
+<p><code class="docutils literal notranslate"><span class="pre">q</span></code>, one of the two primes composing <code class="docutils literal notranslate"><span class="pre">n</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers.d">
+<span class="sig-name descname"><span class="pre">d</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers.d" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
+<p>The private exponent.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers.dmp1">
+<span class="sig-name descname"><span class="pre">dmp1</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers.dmp1" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
+<p>A <a class="reference external" href="https://en.wikipedia.org/wiki/RSA_%28cryptosystem%29#Using_the_Chinese_remainder_algorithm">Chinese remainder theorem</a> coefficient used to speed up RSA
+operations. Calculated as: d mod (p-1)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers.dmq1">
+<span class="sig-name descname"><span class="pre">dmq1</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers.dmq1" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
+<p>A <a class="reference external" href="https://en.wikipedia.org/wiki/RSA_%28cryptosystem%29#Using_the_Chinese_remainder_algorithm">Chinese remainder theorem</a> coefficient used to speed up RSA
+operations. Calculated as: d mod (q-1)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers.iqmp">
+<span class="sig-name descname"><span class="pre">iqmp</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers.iqmp" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
+<p>A <a class="reference external" href="https://en.wikipedia.org/wiki/RSA_%28cryptosystem%29#Using_the_Chinese_remainder_algorithm">Chinese remainder theorem</a> coefficient used to speed up RSA
+operations. Calculated as: q<sup>-1</sup> mod p</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers.private_key">
+<span class="sig-name descname"><span class="pre">private_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">unsafe_skip_rsa_key_validation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers.private_key" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>unsafe_skip_rsa_key_validation</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a>) – <div class="versionadded">
+<p><span class="versionmodified added">Added in version 39.0.0.</span></p>
+</div>
+<p>A keyword-only argument that defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>. If <code class="docutils literal notranslate"><span class="pre">True</span></code>
+RSA private keys will not be validated. This significantly speeds up
+loading the keys, but is <a class="reference internal" href="../../../../glossary/#term-unsafe"><span class="xref std std-term">unsafe</span></a> unless you are certain
+the key is valid. User supplied keys should never be loaded with
+this parameter set to <code class="docutils literal notranslate"><span class="pre">True</span></code>. If you do load an invalid key this
+way and attempt to use it OpenSSL may hang, crash, or otherwise
+misbehave.</p>
+</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An instance of
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey" title="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">RSAPrivateKey</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="handling-partial-rsa-private-keys">
+<h2>Handling partial RSA private keys<a class="headerlink" href="#handling-partial-rsa-private-keys" title="Link to this heading"></a></h2>
+<p>If you are trying to load RSA private keys yourself you may find that not all
+parameters required by <code class="docutils literal notranslate"><span class="pre">RSAPrivateNumbers</span></code> are available. In particular the
+<a class="reference external" href="https://en.wikipedia.org/wiki/RSA_%28cryptosystem%29#Using_the_Chinese_remainder_algorithm">Chinese Remainder Theorem</a> (CRT) values <code class="docutils literal notranslate"><span class="pre">dmp1</span></code>, <code class="docutils literal notranslate"><span class="pre">dmq1</span></code>, <code class="docutils literal notranslate"><span class="pre">iqmp</span></code> may be
+missing or present in a different form. For example, <a class="reference external" href="https://en.wikipedia.org/wiki/Pretty_Good_Privacy">OpenPGP</a> does not include
+the <code class="docutils literal notranslate"><span class="pre">iqmp</span></code>, <code class="docutils literal notranslate"><span class="pre">dmp1</span></code> or <code class="docutils literal notranslate"><span class="pre">dmq1</span></code> parameters.</p>
+<p>The following functions are provided for users who want to work with keys like
+this without having to do the math themselves.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.rsa_crt_iqmp">
+<span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.asymmetric.rsa.</span></span><span class="sig-name descname"><span class="pre">rsa_crt_iqmp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/rsa.py#L197-L203"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.rsa_crt_iqmp" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.4.</span></p>
+</div>
+<p>Computes the <code class="docutils literal notranslate"><span class="pre">iqmp</span></code> (also known as <code class="docutils literal notranslate"><span class="pre">qInv</span></code>) parameter from the RSA
+primes <code class="docutils literal notranslate"><span class="pre">p</span></code> and <code class="docutils literal notranslate"><span class="pre">q</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.rsa_crt_dmp1">
+<span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.asymmetric.rsa.</span></span><span class="sig-name descname"><span class="pre">rsa_crt_dmp1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">private_exponent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/rsa.py#L206-L213"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.rsa_crt_dmp1" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.4.</span></p>
+</div>
+<p>Computes the <code class="docutils literal notranslate"><span class="pre">dmp1</span></code> parameter from the RSA private exponent (<code class="docutils literal notranslate"><span class="pre">d</span></code>) and
+prime <code class="docutils literal notranslate"><span class="pre">p</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.rsa_crt_dmq1">
+<span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.asymmetric.rsa.</span></span><span class="sig-name descname"><span class="pre">rsa_crt_dmq1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">private_exponent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/rsa.py#L216-L223"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.rsa_crt_dmq1" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.4.</span></p>
+</div>
+<p>Computes the <code class="docutils literal notranslate"><span class="pre">dmq1</span></code> parameter from the RSA private exponent (<code class="docutils literal notranslate"><span class="pre">d</span></code>) and
+prime <code class="docutils literal notranslate"><span class="pre">q</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.rsa_recover_private_exponent">
+<span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.asymmetric.rsa.</span></span><span class="sig-name descname"><span class="pre">rsa_recover_private_exponent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/rsa.py#L226-L242"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.rsa_recover_private_exponent" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 43.0.0.</span></p>
+</div>
+<p>Computes the RSA private_exponent (<code class="docutils literal notranslate"><span class="pre">d</span></code>) given the public exponent (<code class="docutils literal notranslate"><span class="pre">e</span></code>)
+and the RSA primes <code class="docutils literal notranslate"><span class="pre">p</span></code> and <code class="docutils literal notranslate"><span class="pre">q</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This implementation uses the Carmichael totient function to return the
+smallest working value of <code class="docutils literal notranslate"><span class="pre">d</span></code>. Older RSA implementations, including the
+original RSA paper, often used the Euler totient function, which results
+in larger but equally functional private exponents. The private exponents
+resulting from the Carmichael totient function, as returned here, are
+slightly more computationally efficient to use, and some modern standards
+require them.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.rsa_recover_prime_factors">
+<span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.asymmetric.rsa.</span></span><span class="sig-name descname"><span class="pre">rsa_recover_prime_factors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/rsa.py#L250-L295"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.rsa_recover_prime_factors" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.8.</span></p>
+</div>
+<p>Computes the prime factors <code class="docutils literal notranslate"><span class="pre">(p,</span> <span class="pre">q)</span></code> given the modulus, public exponent,
+and private exponent.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When recovering prime factors this algorithm will always return <code class="docutils literal notranslate"><span class="pre">p</span></code>
+and <code class="docutils literal notranslate"><span class="pre">q</span></code> such that <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">&gt;</span> <span class="pre">q</span></code>. Note: before 1.5, this function always
+returned <code class="docutils literal notranslate"><span class="pre">p</span></code> and <code class="docutils literal notranslate"><span class="pre">q</span></code> such that <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">&lt;</span> <span class="pre">q</span></code>. It was changed because
+libraries commonly require <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">&gt;</span> <span class="pre">q</span></code>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A tuple <code class="docutils literal notranslate"><span class="pre">(p,</span> <span class="pre">q)</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="key-interfaces">
+<h2>Key interfaces<a class="headerlink" href="#key-interfaces" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.asymmetric.rsa.</span></span><span class="sig-name descname"><span class="pre">RSAPrivateKey</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/rsa.py#L18-L78"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.2.</span></p>
+</div>
+<p>An <a class="reference external" href="https://en.wikipedia.org/wiki/RSA_(cryptosystem)">RSA</a> private key.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey.decrypt">
+<span class="sig-name descname"><span class="pre">decrypt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ciphertext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/rsa.py#L19-L23"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey.decrypt" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.4.</span></p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Our implementation of PKCS1 v1.5 decryption is not constant time. See
+<a class="reference internal" href="../../../../limitations/"><span class="doc">Known security limitations</span></a> for details.</p>
+</div>
+<p>Decrypt data that was encrypted with the public key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ciphertext</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><em>bytes</em></a>) – The ciphertext to decrypt.</p></li>
+<li><p><strong>padding</strong> – An instance of
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding" title="cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsymmetricPadding</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return bytes<span class="colon">:</span></dt>
+<dd class="field-even"><p>Decrypted data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey.public_key">
+<span class="sig-name descname"><span class="pre">public_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/rsa.py#L32-L36"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey.public_key" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey" title="cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">RSAPublicKey</span></code></a></p>
+</dd>
+</dl>
+<p>An RSA public key object corresponding to the values of the private key.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey.key_size">
+<span class="sig-name descname"><span class="pre">key_size</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey.key_size" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
+<p>The bit length of the modulus.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey.sign">
+<span class="sig-name descname"><span class="pre">sign</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/rsa.py#L38-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey.sign" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 1.4.</span></p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 1.6: </span><a class="reference internal" href="../utils/#cryptography.hazmat.primitives.asymmetric.utils.Prehashed" title="cryptography.hazmat.primitives.asymmetric.utils.Prehashed"><code class="xref py py-class docutils literal notranslate"><span class="pre">Prehashed</span></code></a>
+can now be used as an <code class="docutils literal notranslate"><span class="pre">algorithm</span></code>.</p>
+</div>
+<p>Sign one block of data which can be verified later by others using the
+public key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<a class="reference internal" href="../../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – The message string to sign.</p></li>
+<li><p><strong>padding</strong> – An instance of
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding" title="cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsymmetricPadding</span></code></a>.</p></li>
+<li><p><strong>algorithm</strong> – An instance of
+<a class="reference internal" href="../../cryptographic-hashes/#cryptography.hazmat.primitives.hashes.HashAlgorithm" title="cryptography.hazmat.primitives.hashes.HashAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">HashAlgorithm</span></code></a> or
+<a class="reference internal" href="../utils/#cryptography.hazmat.primitives.asymmetric.utils.Prehashed" title="cryptography.hazmat.primitives.asymmetric.utils.Prehashed"><code class="xref py py-class docutils literal notranslate"><span class="pre">Prehashed</span></code></a>
+if the <code class="docutils literal notranslate"><span class="pre">data</span></code> you want to sign has already been hashed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return bytes<span class="colon">:</span></dt>
+<dd class="field-even"><p>Signature.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey.private_numbers">
+<span class="sig-name descname"><span class="pre">private_numbers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/rsa.py#L51-L55"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey.private_numbers" title="Link to this definition"></a></dt>
+<dd><p>Create a
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers" title="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers"><code class="xref py py-class docutils literal notranslate"><span class="pre">RSAPrivateNumbers</span></code></a>
+object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers" title="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers"><code class="xref py py-class docutils literal notranslate"><span class="pre">RSAPrivateNumbers</span></code></a>
+instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey.private_bytes">
+<span class="sig-name descname"><span class="pre">private_bytes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encoding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encryption_algorithm</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/rsa.py#L57-L66"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey.private_bytes" title="Link to this definition"></a></dt>
+<dd><p>Allows serialization of the key to bytes. Encoding (
+<a class="reference internal" href="../serialization/#cryptography.hazmat.primitives.serialization.Encoding.PEM" title="cryptography.hazmat.primitives.serialization.Encoding.PEM"><code class="xref py py-attr docutils literal notranslate"><span class="pre">PEM</span></code></a> or
+<a class="reference internal" href="../serialization/#cryptography.hazmat.primitives.serialization.Encoding.DER" title="cryptography.hazmat.primitives.serialization.Encoding.DER"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DER</span></code></a>),
+format (
+<a class="reference internal" href="../serialization/#cryptography.hazmat.primitives.serialization.PrivateFormat.TraditionalOpenSSL" title="cryptography.hazmat.primitives.serialization.PrivateFormat.TraditionalOpenSSL"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TraditionalOpenSSL</span></code></a>,
+<a class="reference internal" href="../serialization/#cryptography.hazmat.primitives.serialization.PrivateFormat.OpenSSH" title="cryptography.hazmat.primitives.serialization.PrivateFormat.OpenSSH"><code class="xref py py-attr docutils literal notranslate"><span class="pre">OpenSSH</span></code></a>
+or
+<a class="reference internal" href="../serialization/#cryptography.hazmat.primitives.serialization.PrivateFormat.PKCS8" title="cryptography.hazmat.primitives.serialization.PrivateFormat.PKCS8"><code class="xref py py-attr docutils literal notranslate"><span class="pre">PKCS8</span></code></a>)
+and encryption algorithm (such as
+<a class="reference internal" href="../serialization/#cryptography.hazmat.primitives.serialization.BestAvailableEncryption" title="cryptography.hazmat.primitives.serialization.BestAvailableEncryption"><code class="xref py py-class docutils literal notranslate"><span class="pre">BestAvailableEncryption</span></code></a>
+or <a class="reference internal" href="../serialization/#cryptography.hazmat.primitives.serialization.NoEncryption" title="cryptography.hazmat.primitives.serialization.NoEncryption"><code class="xref py py-class docutils literal notranslate"><span class="pre">NoEncryption</span></code></a>)
+are chosen to define the exact serialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>encoding</strong> – A value from the
+<a class="reference internal" href="../serialization/#cryptography.hazmat.primitives.serialization.Encoding" title="cryptography.hazmat.primitives.serialization.Encoding"><code class="xref py py-class docutils literal notranslate"><span class="pre">Encoding</span></code></a> enum.</p></li>
+<li><p><strong>format</strong> – A value from the
+<a class="reference internal" href="../serialization/#cryptography.hazmat.primitives.serialization.PrivateFormat" title="cryptography.hazmat.primitives.serialization.PrivateFormat"><code class="xref py py-class docutils literal notranslate"><span class="pre">PrivateFormat</span></code></a>
+enum.</p></li>
+<li><p><strong>encryption_algorithm</strong> – An instance of an object conforming to the
+<a class="reference internal" href="../serialization/#cryptography.hazmat.primitives.serialization.KeySerializationEncryption" title="cryptography.hazmat.primitives.serialization.KeySerializationEncryption"><code class="xref py py-class docutils literal notranslate"><span class="pre">KeySerializationEncryption</span></code></a>
+interface.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return bytes<span class="colon">:</span></dt>
+<dd class="field-even"><p>Serialized key.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.asymmetric.rsa.</span></span><span class="sig-name descname"><span class="pre">RSAPublicKey</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/rsa.py#L85-L154"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.2.</span></p>
+</div>
+<p>An <a class="reference external" href="https://en.wikipedia.org/wiki/RSA_(cryptosystem)">RSA</a> public key.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey.encrypt">
+<span class="sig-name descname"><span class="pre">encrypt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plaintext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/rsa.py#L86-L90"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey.encrypt" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.4.</span></p>
+</div>
+<p>Encrypt data with the public key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plaintext</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><em>bytes</em></a>) – The plaintext to encrypt.</p></li>
+<li><p><strong>padding</strong> – An instance of
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding" title="cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsymmetricPadding</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return bytes<span class="colon">:</span></dt>
+<dd class="field-even"><p>Encrypted data.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – The data could not be encrypted. One possible cause
+is if <code class="docutils literal notranslate"><span class="pre">data</span></code> is too large; RSA keys can only encrypt data that
+is smaller than the key size.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey.key_size">
+<span class="sig-name descname"><span class="pre">key_size</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey.key_size" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
+<p>The bit length of the modulus.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey.public_numbers">
+<span class="sig-name descname"><span class="pre">public_numbers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/rsa.py#L99-L103"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey.public_numbers" title="Link to this definition"></a></dt>
+<dd><p>Create a
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicNumbers" title="cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicNumbers"><code class="xref py py-class docutils literal notranslate"><span class="pre">RSAPublicNumbers</span></code></a>
+object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicNumbers" title="cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicNumbers"><code class="xref py py-class docutils literal notranslate"><span class="pre">RSAPublicNumbers</span></code></a>
+instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey.public_bytes">
+<span class="sig-name descname"><span class="pre">public_bytes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encoding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/rsa.py#L105-L113"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey.public_bytes" title="Link to this definition"></a></dt>
+<dd><p>Allows serialization of the key to bytes. Encoding (
+<a class="reference internal" href="../serialization/#cryptography.hazmat.primitives.serialization.Encoding.PEM" title="cryptography.hazmat.primitives.serialization.Encoding.PEM"><code class="xref py py-attr docutils literal notranslate"><span class="pre">PEM</span></code></a> or
+<a class="reference internal" href="../serialization/#cryptography.hazmat.primitives.serialization.Encoding.DER" title="cryptography.hazmat.primitives.serialization.Encoding.DER"><code class="xref py py-attr docutils literal notranslate"><span class="pre">DER</span></code></a>) and
+format (
+<a class="reference internal" href="../serialization/#cryptography.hazmat.primitives.serialization.PublicFormat.SubjectPublicKeyInfo" title="cryptography.hazmat.primitives.serialization.PublicFormat.SubjectPublicKeyInfo"><code class="xref py py-attr docutils literal notranslate"><span class="pre">SubjectPublicKeyInfo</span></code></a>
+or
+<a class="reference internal" href="../serialization/#cryptography.hazmat.primitives.serialization.PublicFormat.PKCS1" title="cryptography.hazmat.primitives.serialization.PublicFormat.PKCS1"><code class="xref py py-attr docutils literal notranslate"><span class="pre">PKCS1</span></code></a>)
+are chosen to define the exact serialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>encoding</strong> – A value from the
+<a class="reference internal" href="../serialization/#cryptography.hazmat.primitives.serialization.Encoding" title="cryptography.hazmat.primitives.serialization.Encoding"><code class="xref py py-class docutils literal notranslate"><span class="pre">Encoding</span></code></a> enum.</p></li>
+<li><p><strong>format</strong> – A value from the
+<a class="reference internal" href="../serialization/#cryptography.hazmat.primitives.serialization.PublicFormat" title="cryptography.hazmat.primitives.serialization.PublicFormat"><code class="xref py py-class docutils literal notranslate"><span class="pre">PublicFormat</span></code></a> enum.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return bytes<span class="colon">:</span></dt>
+<dd class="field-even"><p>Serialized key.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey.verify">
+<span class="sig-name descname"><span class="pre">verify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/rsa.py#L115-L125"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey.verify" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 1.4.</span></p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 1.6: </span><a class="reference internal" href="../utils/#cryptography.hazmat.primitives.asymmetric.utils.Prehashed" title="cryptography.hazmat.primitives.asymmetric.utils.Prehashed"><code class="xref py py-class docutils literal notranslate"><span class="pre">Prehashed</span></code></a>
+can now be used as an <code class="docutils literal notranslate"><span class="pre">algorithm</span></code>.</p>
+</div>
+<p>Verify one block of data was signed by the private key
+associated with this public key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>signature</strong> (<a class="reference internal" href="../../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – The signature to verify.</p></li>
+<li><p><strong>data</strong> (<a class="reference internal" href="../../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – The message string that was signed.</p></li>
+<li><p><strong>padding</strong> – An instance of
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding" title="cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsymmetricPadding</span></code></a>.</p></li>
+<li><p><strong>algorithm</strong> – An instance of
+<a class="reference internal" href="../../cryptographic-hashes/#cryptography.hazmat.primitives.hashes.HashAlgorithm" title="cryptography.hazmat.primitives.hashes.HashAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">HashAlgorithm</span></code></a> or
+<a class="reference internal" href="../utils/#cryptography.hazmat.primitives.asymmetric.utils.Prehashed" title="cryptography.hazmat.primitives.asymmetric.utils.Prehashed"><code class="xref py py-class docutils literal notranslate"><span class="pre">Prehashed</span></code></a>
+if the <code class="docutils literal notranslate"><span class="pre">data</span></code> you want to verify has already been hashed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../../../exceptions/#cryptography.exceptions.InvalidSignature" title="cryptography.exceptions.InvalidSignature"><strong>cryptography.exceptions.InvalidSignature</strong></a> – If the signature does
+not validate.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey.recover_data_from_signature">
+<span class="sig-name descname"><span class="pre">recover_data_from_signature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/asymmetric/rsa.py#L127-L136"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey.recover_data_from_signature" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 3.3.</span></p>
+</div>
+<p>Recovers the signed data from the signature. The data typically contains
+the digest of the original message string. The <code class="docutils literal notranslate"><span class="pre">padding</span></code> and
+<code class="docutils literal notranslate"><span class="pre">algorithm</span></code> parameters must match the ones used when the signature
+was created for the recovery to succeed.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">algorithm</span></code> parameter can also be set to <code class="docutils literal notranslate"><span class="pre">NoDigestInfo</span></code> to recover all
+the data present in the signature, without regard to its format or the
+hash algorithm used for its creation. (Note that setting <code class="docutils literal notranslate"><span class="pre">algorithm</span></code> to <code class="docutils literal notranslate"><span class="pre">None`</span>
+<span class="pre">is</span> <span class="pre">deprecated</span> <span class="pre">and</span> <span class="pre">have</span> <span class="pre">the</span> <span class="pre">same</span> <span class="pre">semantic</span> <span class="pre">as</span> <span class="pre">setting</span> <span class="pre">``NoDigestInfo</span></code>.)</p>
+<p>For
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.padding.PKCS1v15" title="cryptography.hazmat.primitives.asymmetric.padding.PKCS1v15"><code class="xref py py-class docutils literal notranslate"><span class="pre">PKCS1v15</span></code></a>
+padding, this method returns the data after removing the padding layer.
+For standard signatures the data contains the full <code class="docutils literal notranslate"><span class="pre">DigestInfo</span></code>
+structure.  For non-standard signatures, any data can be returned,
+including zero-length data.</p>
+<p>Normally you should use the
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey.verify" title="cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey.verify"><code class="xref py py-meth docutils literal notranslate"><span class="pre">verify()</span></code></a>
+function to validate the signature. But for some non-standard signature
+formats you may need to explicitly recover and validate the signed
+data. The following are some examples:</p>
+<ul class="simple">
+<li><p>Some old Thawte and Verisign timestamp certificates without <code class="docutils literal notranslate"><span class="pre">DigestInfo</span></code>.</p></li>
+<li><p>Signed MD5/SHA1 hashes in TLS 1.1 or earlier (<span class="target" id="index-3"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc4346.html"><strong>RFC 4346</strong></a>, section 4.7).</p></li>
+<li><p>IKE version 1 signatures without <code class="docutils literal notranslate"><span class="pre">DigestInfo</span></code> (<span class="target" id="index-4"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc2409.html"><strong>RFC 2409</strong></a>, section 5.1).</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>signature</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><em>bytes</em></a>) – The signature.</p></li>
+<li><p><strong>padding</strong> – An instance of
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding" title="cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsymmetricPadding</span></code></a>.
+Recovery is only supported with some of the padding types. (Currently
+only with
+<a class="reference internal" href="#cryptography.hazmat.primitives.asymmetric.padding.PKCS1v15" title="cryptography.hazmat.primitives.asymmetric.padding.PKCS1v15"><code class="xref py py-class docutils literal notranslate"><span class="pre">PKCS1v15</span></code></a>).</p></li>
+<li><p><strong>algorithm</strong> – An instance of
+<a class="reference internal" href="../../cryptographic-hashes/#cryptography.hazmat.primitives.hashes.HashAlgorithm" title="cryptography.hazmat.primitives.hashes.HashAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">HashAlgorithm</span></code></a>.
+Can be <code class="docutils literal notranslate"><span class="pre">None</span></code> to return the all the data present in the signature.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return bytes<span class="colon">:</span></dt>
+<dd class="field-even"><p>The signed data.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="../../../../exceptions/#cryptography.exceptions.InvalidSignature" title="cryptography.exceptions.InvalidSignature"><strong>cryptography.exceptions.InvalidSignature</strong></a> – If the signature is
+invalid.</p></li>
+<li><p><a class="reference internal" href="../../../../exceptions/#cryptography.exceptions.UnsupportedAlgorithm" title="cryptography.exceptions.UnsupportedAlgorithm"><strong>cryptography.exceptions.UnsupportedAlgorithm</strong></a> – If signature
+data recovery is not supported with the provided <code class="docutils literal notranslate"><span class="pre">padding</span></code> type.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../ec/" class="btn btn-neutral float-left" title="Elliptic curve cryptography" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../dh/" class="btn btn-neutral float-right" title="Diffie-Hellman key exchange" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2013-2026, Individual Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

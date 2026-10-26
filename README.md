@@ -4,28 +4,24 @@ This repository solves every exercise and additional exercise from Labs 1-6.
 It also contains readable, reusable implementations for adapting to unseen exam
 questions.
 
+The additional source-backed solutions requested for the secure grant portal,
+national e-voting, and Labs 5-8 are in [`solved_pyqs/`](solved_pyqs/),
+[`solved_labs/`](solved_labs/), and [`plug_and_play/standalone/`](plug_and_play/standalone/).
+The user-provided manuals and locally saved API references are in
+[`source_material/`](source_material/) and [`docs/`](docs/).
+
+Revision material and the complete question audit are in
+[`STUDY_NOTES_LABS_1_TO_8.md`](STUDY_NOTES_LABS_1_TO_8.md) and
+[`LAB_1_TO_8_AUDIT.md`](LAB_1_TO_8_AUDIT.md).
+
 ## Fastest way during the exam
 
-1. List every exact manual question:
+Start `lab.py` and choose an exercise from the menu.  `Q` means Lab Exercise
+and `A` means Additional Exercise.  The solved PYQs and standalone snippets
+also start directly in their own menus; no flags or command-line options are
+needed.
 
-   ```bash
-   python lab.py --list
-   ```
-
-2. Run one answer, for example:
-
-   ```bash
-   python lab.py L1Q4
-   python lab.py L2Q5
-   python lab.py L5Q3
-   python lab.py L6A1
-   ```
-
-   `Q` means Lab Exercise and `A` means Additional Exercise.  Use
-   `--backend pure` for from-scratch implementations or `--backend lib` for
-   library implementations where supported.
-
-3. For an implementation question, open [`plug_and_play/README.md`](plug_and_play/README.md).
+For an implementation question, open [`plug_and_play/README.md`](plug_and_play/README.md).
    AES and DES now have readable full implementations with individual round
    functions and known-answer tests.
 

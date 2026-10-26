@@ -1,0 +1,355 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Symmetric Padding &mdash; Cryptography 51.0.0-dev1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css?v=4c969af8" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=6bfd0e6c"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/tabs.js?v=3ee01567"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <script src="../../../_static/js/versions.js"></script>
+    <link rel="index" title="Index" href="../../../genindex/" />
+    <link rel="search" title="Search" href="../../../search/" />
+    <link rel="next" title="Two-factor authentication" href="../twofactor/" />
+    <link rel="prev" title="Symmetric encryption" href="../symmetric-encryption/" /> 
+<script async type="text/javascript" src="/_/static/javascript/readthedocs-addons.js"></script><meta name="readthedocs-project-slug" content="cryptography" /><meta name="readthedocs-version-slug" content="latest" /><meta name="readthedocs-resolver-filename" content="/hazmat/primitives/padding/" /><meta name="readthedocs-http-status" content="200" /></head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="../../../" class="icon icon-home">
+            Cryptography
+          </a>
+              <div class="switch-menus">
+                <div class="version-switch"></div>
+                <div class="language-switch"></div>
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<a href="https://github.com/pyca/cryptography" style="display:block;margin-top:8px;text-align:center;">View on GitHub</a>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">The recipes layer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../fernet/">Fernet (symmetric encryption)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cobblestone/">Cobblestone (streaming symmetric encryption)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../x509/">X.509</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The hazardous materials layer</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../">Primitives</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../aead/">Authenticated encryption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../asymmetric/">Asymmetric algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hpke/">HPKE (Hybrid Public Key Encryption)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../constant-time/">Constant time functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../key-derivation-functions/">Key derivation functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../keywrap/">Key wrapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mac/">Message authentication codes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cryptographic-hashes/">Message digests (Hashing)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../symmetric-encryption/">Symmetric encryption</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Symmetric Padding</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cryptography.hazmat.primitives.padding.PKCS7"><code class="docutils literal notranslate"><span class="pre">PKCS7</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.padding.PKCS7.padder"><code class="docutils literal notranslate"><span class="pre">PKCS7.padder()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.padding.PKCS7.unpadder"><code class="docutils literal notranslate"><span class="pre">PKCS7.unpadder()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#cryptography.hazmat.primitives.padding.ANSIX923"><code class="docutils literal notranslate"><span class="pre">ANSIX923</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.padding.ANSIX923.padder"><code class="docutils literal notranslate"><span class="pre">ANSIX923.padder()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.padding.ANSIX923.unpadder"><code class="docutils literal notranslate"><span class="pre">ANSIX923.unpadder()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#cryptography.hazmat.primitives.padding.PaddingContext"><code class="docutils literal notranslate"><span class="pre">PaddingContext</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.padding.PaddingContext.update"><code class="docutils literal notranslate"><span class="pre">PaddingContext.update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.padding.PaddingContext.finalize"><code class="docutils literal notranslate"><span class="pre">PaddingContext.finalize()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../twofactor/">Two-factor authentication</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../exceptions/">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../random-numbers/">Random number generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../asn1/">ASN.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../decrepit/">Decrepit cryptography</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The cryptography open source project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation/">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog/">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../openssl/">Use of OpenSSL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../security/">Security</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../limitations/">Known security limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api-stability/">API stability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doing-a-release/">Doing a release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../community/">Community</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary/">Glossary</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../statements/">Statements</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../">Cryptography</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../">Primitives</a></li>
+      <li class="breadcrumb-item active">Symmetric Padding</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/hazmat/primitives/padding.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>
+This is a “Hazardous Materials” module. You should <strong>ONLY</strong> use it if you’re
+100% absolutely sure that you know what you’re doing because this module is
+full of land mines, dragons, and dinosaurs with laser guns.</p>
+</div>
+<section id="module-cryptography.hazmat.primitives.padding">
+<span id="symmetric-padding"></span><h1>Symmetric Padding<a class="headerlink" href="#module-cryptography.hazmat.primitives.padding" title="Link to this heading"></a></h1>
+<p>Padding is a way to take data that may or may not be a multiple of the block
+size for a cipher and extend it out so that it is. This is required for many
+block cipher modes as they require the data to be encrypted to be an exact
+multiple of the block size.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.padding.PKCS7">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.padding.</span></span><span class="sig-name descname"><span class="pre">PKCS7</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_size</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/padding.py#L40-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.padding.PKCS7" title="Link to this definition"></a></dt>
+<dd><p>PKCS7 padding is a generalization of PKCS5 padding (also known as standard
+padding). PKCS7 padding works by appending <code class="docutils literal notranslate"><span class="pre">N</span></code> bytes with the value of
+<code class="docutils literal notranslate"><span class="pre">chr(N)</span></code>, where <code class="docutils literal notranslate"><span class="pre">N</span></code> is the number of bytes required to make the final
+block of data the same size as the block size. A simple example of padding
+is:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">cryptography.hazmat.primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">padding</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">padder</span> <span class="o">=</span> <span class="n">padding</span><span class="o">.</span><span class="n">PKCS7</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span><span class="o">.</span><span class="n">padder</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">padded_data</span> <span class="o">=</span> <span class="n">padder</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="sa">b</span><span class="s2">"11111111111111112222222222"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">padded_data</span> <span class="o">+=</span> <span class="n">padder</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">padded_data</span>
+<span class="go">b'11111111111111112222222222\x06\x06\x06\x06\x06\x06'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">unpadder</span> <span class="o">=</span> <span class="n">padding</span><span class="o">.</span><span class="n">PKCS7</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span><span class="o">.</span><span class="n">unpadder</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">unpadder</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">padded_data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">+=</span> <span class="n">unpadder</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span>
+<span class="go">b'11111111111111112222222222'</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>block_size</strong> – The size of the block in <a class="reference internal" href="../../../glossary/#term-bits"><span class="xref std std-term">bits</span></a> that the data is
+being padded to.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – Raised if block size is not a multiple of 8 or is not
+between 0 and 2040 inclusive.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.padding.PKCS7.padder">
+<span class="sig-name descname"><span class="pre">padder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/padding.py#L45-L46"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.padding.PKCS7.padder" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A padding
+<a class="reference internal" href="#cryptography.hazmat.primitives.padding.PaddingContext" title="cryptography.hazmat.primitives.padding.PaddingContext"><code class="xref py py-class docutils literal notranslate"><span class="pre">PaddingContext</span></code></a>
+instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.padding.PKCS7.unpadder">
+<span class="sig-name descname"><span class="pre">unpadder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/padding.py#L48-L49"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.padding.PKCS7.unpadder" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An unpadding
+<a class="reference internal" href="#cryptography.hazmat.primitives.padding.PaddingContext" title="cryptography.hazmat.primitives.padding.PaddingContext"><code class="xref py py-class docutils literal notranslate"><span class="pre">PaddingContext</span></code></a>
+instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.padding.ANSIX923">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.padding.</span></span><span class="sig-name descname"><span class="pre">ANSIX923</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_size</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/padding.py#L56-L65"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.padding.ANSIX923" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 1.3.</span></p>
+</div>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Padding_%28cryptography%29#ANSI_X9.23">ANSI X9.23</a> padding works by appending <code class="docutils literal notranslate"><span class="pre">N-1</span></code> bytes with the value of
+<code class="docutils literal notranslate"><span class="pre">0</span></code> and a last byte with the value of <code class="docutils literal notranslate"><span class="pre">chr(N)</span></code>, where <code class="docutils literal notranslate"><span class="pre">N</span></code> is the
+number of bytes required to make the final block of data the same size as
+the block size. A simple example of padding is:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">padder</span> <span class="o">=</span> <span class="n">padding</span><span class="o">.</span><span class="n">ANSIX923</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span><span class="o">.</span><span class="n">padder</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">padded_data</span> <span class="o">=</span> <span class="n">padder</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="sa">b</span><span class="s2">"11111111111111112222222222"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">padded_data</span> <span class="o">+=</span> <span class="n">padder</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">padded_data</span>
+<span class="go">b'11111111111111112222222222\x00\x00\x00\x00\x00\x06'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">unpadder</span> <span class="o">=</span> <span class="n">padding</span><span class="o">.</span><span class="n">ANSIX923</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span><span class="o">.</span><span class="n">unpadder</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">unpadder</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">padded_data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">+=</span> <span class="n">unpadder</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span>
+<span class="go">b'11111111111111112222222222'</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>block_size</strong> – The size of the block in <a class="reference internal" href="../../../glossary/#term-bits"><span class="xref std std-term">bits</span></a> that the data is
+being padded to.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – Raised if block size is not a multiple of 8 or is not
+between 0 and 2040 inclusive.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.padding.ANSIX923.padder">
+<span class="sig-name descname"><span class="pre">padder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/padding.py#L61-L62"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.padding.ANSIX923.padder" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A padding
+<a class="reference internal" href="#cryptography.hazmat.primitives.padding.PaddingContext" title="cryptography.hazmat.primitives.padding.PaddingContext"><code class="xref py py-class docutils literal notranslate"><span class="pre">PaddingContext</span></code></a>
+instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.padding.ANSIX923.unpadder">
+<span class="sig-name descname"><span class="pre">unpadder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/padding.py#L64-L65"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.padding.ANSIX923.unpadder" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An unpadding
+<a class="reference internal" href="#cryptography.hazmat.primitives.padding.PaddingContext" title="cryptography.hazmat.primitives.padding.PaddingContext"><code class="xref py py-class docutils literal notranslate"><span class="pre">PaddingContext</span></code></a>
+instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.padding.PaddingContext">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.padding.</span></span><span class="sig-name descname"><span class="pre">PaddingContext</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/padding.py#L18-L29"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.padding.PaddingContext" title="Link to this definition"></a></dt>
+<dd><p>When calling <code class="docutils literal notranslate"><span class="pre">padder()</span></code> or <code class="docutils literal notranslate"><span class="pre">unpadder()</span></code> the result will conform to the
+<code class="docutils literal notranslate"><span class="pre">PaddingContext</span></code> interface. You can then call <code class="docutils literal notranslate"><span class="pre">update(data)</span></code> with data
+until you have fed everything into the context. Once that is done call
+<code class="docutils literal notranslate"><span class="pre">finalize()</span></code> to finish the operation and obtain the remainder of the
+data.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.padding.PaddingContext.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/padding.py#L19-L23"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.padding.PaddingContext.update" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – The data you wish to pass into the context.</p>
+</dd>
+<dt class="field-even">Return bytes<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns the data that was padded or unpadded.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – Raised if data is not bytes.</p></li>
+<li><p><a class="reference internal" href="../../../exceptions/#cryptography.exceptions.AlreadyFinalized" title="cryptography.exceptions.AlreadyFinalized"><strong>cryptography.exceptions.AlreadyFinalized</strong></a> – See <a class="reference internal" href="#cryptography.hazmat.primitives.padding.PaddingContext.finalize" title="cryptography.hazmat.primitives.padding.PaddingContext.finalize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">finalize()</span></code></a>.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – This exception is raised if <code class="docutils literal notranslate"><span class="pre">data</span></code> is not <code class="docutils literal notranslate"><span class="pre">bytes</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.padding.PaddingContext.finalize">
+<span class="sig-name descname"><span class="pre">finalize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/padding.py#L25-L29"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.padding.PaddingContext.finalize" title="Link to this definition"></a></dt>
+<dd><p>Finalize the current context and return the rest of the data.</p>
+<p>After <code class="docutils literal notranslate"><span class="pre">finalize</span></code> has been called this object can no longer be used;
+<a class="reference internal" href="#cryptography.hazmat.primitives.padding.PaddingContext.update" title="cryptography.hazmat.primitives.padding.PaddingContext.update"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update()</span></code></a> and <a class="reference internal" href="#cryptography.hazmat.primitives.padding.PaddingContext.finalize" title="cryptography.hazmat.primitives.padding.PaddingContext.finalize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">finalize()</span></code></a> will raise an
+<a class="reference internal" href="../../../exceptions/#cryptography.exceptions.AlreadyFinalized" title="cryptography.exceptions.AlreadyFinalized"><code class="xref py py-class docutils literal notranslate"><span class="pre">AlreadyFinalized</span></code></a> exception.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return bytes<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns the remainder of the data.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – Raised if data is not bytes.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – When trying to remove padding from incorrectly
+padded data.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../symmetric-encryption/" class="btn btn-neutral float-left" title="Symmetric encryption" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../twofactor/" class="btn btn-neutral float-right" title="Two-factor authentication" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2013-2026, Individual Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

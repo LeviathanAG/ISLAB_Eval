@@ -1,0 +1,1235 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Symmetric encryption &mdash; Cryptography 51.0.0-dev1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css?v=4c969af8" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=6bfd0e6c"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../_static/tabs.js?v=3ee01567"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <script src="../../../_static/js/versions.js"></script>
+    <link rel="index" title="Index" href="../../../genindex/" />
+    <link rel="search" title="Search" href="../../../search/" />
+    <link rel="next" title="Symmetric Padding" href="../padding/" />
+    <link rel="prev" title="Message digests (Hashing)" href="../cryptographic-hashes/" /> 
+<script async type="text/javascript" src="/_/static/javascript/readthedocs-addons.js"></script><meta name="readthedocs-project-slug" content="cryptography" /><meta name="readthedocs-version-slug" content="latest" /><meta name="readthedocs-resolver-filename" content="/hazmat/primitives/symmetric-encryption/" /><meta name="readthedocs-http-status" content="200" /></head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+
+          
+          
+          <a href="../../../" class="icon icon-home">
+            Cryptography
+          </a>
+              <div class="switch-menus">
+                <div class="version-switch"></div>
+                <div class="language-switch"></div>
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+<a href="https://github.com/pyca/cryptography" style="display:block;margin-top:8px;text-align:center;">View on GitHub</a>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">The recipes layer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../fernet/">Fernet (symmetric encryption)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cobblestone/">Cobblestone (streaming symmetric encryption)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../x509/">X.509</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The hazardous materials layer</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../">Primitives</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../aead/">Authenticated encryption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../asymmetric/">Asymmetric algorithms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hpke/">HPKE (Hybrid Public Key Encryption)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../constant-time/">Constant time functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../key-derivation-functions/">Key derivation functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../keywrap/">Key wrapping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mac/">Message authentication codes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cryptographic-hashes/">Message digests (Hashing)</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Symmetric encryption</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.Cipher"><code class="docutils literal notranslate"><span class="pre">Cipher</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.Cipher.encryptor"><code class="docutils literal notranslate"><span class="pre">Cipher.encryptor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.Cipher.decryptor"><code class="docutils literal notranslate"><span class="pre">Cipher.decryptor()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#algorithms">Algorithms</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.algorithms.AES"><code class="docutils literal notranslate"><span class="pre">AES</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.algorithms.AES128"><code class="docutils literal notranslate"><span class="pre">AES128</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.algorithms.AES256"><code class="docutils literal notranslate"><span class="pre">AES256</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.algorithms.Camellia"><code class="docutils literal notranslate"><span class="pre">Camellia</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.algorithms.ChaCha20"><code class="docutils literal notranslate"><span class="pre">ChaCha20</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.algorithms.TripleDES"><code class="docutils literal notranslate"><span class="pre">TripleDES</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.algorithms.SM4"><code class="docutils literal notranslate"><span class="pre">SM4</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#weak-ciphers">Weak ciphers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-cryptography.hazmat.primitives.ciphers.modes">Modes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.CBC"><code class="docutils literal notranslate"><span class="pre">CBC</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.CTR"><code class="docutils literal notranslate"><span class="pre">CTR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.OFB"><code class="docutils literal notranslate"><span class="pre">OFB</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.CFB"><code class="docutils literal notranslate"><span class="pre">CFB</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.CFB8"><code class="docutils literal notranslate"><span class="pre">CFB8</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.GCM"><code class="docutils literal notranslate"><span class="pre">GCM</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.XTS"><code class="docutils literal notranslate"><span class="pre">XTS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#insecure-modes">Insecure modes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#interfaces">Interfaces</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.CipherContext"><code class="docutils literal notranslate"><span class="pre">CipherContext</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.AEADCipherContext"><code class="docutils literal notranslate"><span class="pre">AEADCipherContext</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.AEADEncryptionContext"><code class="docutils literal notranslate"><span class="pre">AEADEncryptionContext</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.AEADDecryptionContext"><code class="docutils literal notranslate"><span class="pre">AEADDecryptionContext</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.CipherAlgorithm"><code class="docutils literal notranslate"><span class="pre">CipherAlgorithm</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.BlockCipherAlgorithm"><code class="docutils literal notranslate"><span class="pre">BlockCipherAlgorithm</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.Mode"><code class="docutils literal notranslate"><span class="pre">Mode</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.ModeWithInitializationVector"><code class="docutils literal notranslate"><span class="pre">ModeWithInitializationVector</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.ModeWithNonce"><code class="docutils literal notranslate"><span class="pre">ModeWithNonce</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.ModeWithAuthenticationTag"><code class="docutils literal notranslate"><span class="pre">ModeWithAuthenticationTag</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.ModeWithTweak"><code class="docutils literal notranslate"><span class="pre">ModeWithTweak</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#exceptions">Exceptions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cryptography.exceptions.InvalidTag"><code class="docutils literal notranslate"><span class="pre">InvalidTag</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../padding/">Symmetric Padding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../twofactor/">Two-factor authentication</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../exceptions/">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../random-numbers/">Random number generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../asn1/">ASN.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../decrepit/">Decrepit cryptography</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The cryptography open source project</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation/">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog/">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/">Frequently asked questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../development/">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../openssl/">Use of OpenSSL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../security/">Security</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../limitations/">Known security limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api-stability/">API stability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doing-a-release/">Doing a release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../community/">Community</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary/">Glossary</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../statements/">Statements</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../">Cryptography</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../">Primitives</a></li>
+      <li class="breadcrumb-item active">Symmetric encryption</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/hazmat/primitives/symmetric-encryption.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>
+This is a “Hazardous Materials” module. You should <strong>ONLY</strong> use it if you’re
+100% absolutely sure that you know what you’re doing because this module is
+full of land mines, dragons, and dinosaurs with laser guns.
+
+
+You may instead be interested in <a class="reference internal" href="../../../fernet/"><span class="doc">Fernet (symmetric encryption)</span></a>.</p>
+</div>
+<section id="module-cryptography.hazmat.primitives.ciphers">
+<span id="symmetric-encryption"></span><h1>Symmetric encryption<a class="headerlink" href="#module-cryptography.hazmat.primitives.ciphers" title="Link to this heading"></a></h1>
+<p>Symmetric encryption is a way to <a class="reference external" href="https://ssd.eff.org/en/module/what-should-i-know-about-encryption">encrypt</a> or hide the contents of material
+where the sender and receiver both use the same secret key. Note that symmetric
+encryption is <strong>not</strong> sufficient for most applications because it only
+provides secrecy but not authenticity. That means an attacker can’t see the
+message but an attacker can create bogus messages and force the application to
+decrypt them. In many contexts, a lack of authentication on encrypted messages
+can result in a loss of secrecy as well.</p>
+<p>For this reason in nearly all contexts it is necessary to combine encryption
+with a message authentication code, such as
+<a class="reference internal" href="../mac/hmac/"><span class="doc">HMAC</span></a>, in an “encrypt-then-MAC”
+formulation as <a class="reference external" href="https://www.daemonology.net/blog/2009-06-11-cryptographic-right-answers.html">described by Colin Percival</a>. <code class="docutils literal notranslate"><span class="pre">cryptography</span></code> includes a
+recipe named <a class="reference internal" href="../../../fernet/"><span class="doc">Fernet (symmetric encryption)</span></a> that does this for you. <strong>To minimize the risk of
+security issues you should evaluate Fernet to see if it fits your needs before
+implementing anything using this module.</strong> If <a class="reference internal" href="../../../fernet/"><span class="doc">Fernet (symmetric encryption)</span></a> is not
+appropriate for your use-case then you may still benefit from
+<a class="reference internal" href="../aead/"><span class="doc">Authenticated encryption</span></a> which combines encryption and authentication
+securely.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.Cipher">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.</span></span><span class="sig-name descname"><span class="pre">Cipher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algorithm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/base.py#L78-L131"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.Cipher" title="Link to this definition"></a></dt>
+<dd><p>Cipher objects combine an algorithm such as
+<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.algorithms.AES" title="cryptography.hazmat.primitives.ciphers.algorithms.AES"><code class="xref py py-class docutils literal notranslate"><span class="pre">AES</span></code></a> with a
+mode like
+<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.CBC" title="cryptography.hazmat.primitives.ciphers.modes.CBC"><code class="xref py py-class docutils literal notranslate"><span class="pre">CBC</span></code></a> or
+<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.CTR" title="cryptography.hazmat.primitives.ciphers.modes.CTR"><code class="xref py py-class docutils literal notranslate"><span class="pre">CTR</span></code></a>. A simple
+example of encrypting and then decrypting content with AES is:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">cryptography.hazmat.primitives.ciphers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Cipher</span><span class="p">,</span> <span class="n">algorithms</span><span class="p">,</span> <span class="n">modes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">urandom</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">urandom</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cipher</span> <span class="o">=</span> <span class="n">Cipher</span><span class="p">(</span><span class="n">algorithms</span><span class="o">.</span><span class="n">AES</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">modes</span><span class="o">.</span><span class="n">CBC</span><span class="p">(</span><span class="n">iv</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encryptor</span> <span class="o">=</span> <span class="n">cipher</span><span class="o">.</span><span class="n">encryptor</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ct</span> <span class="o">=</span> <span class="n">encryptor</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="sa">b</span><span class="s2">"a secret message"</span><span class="p">)</span> <span class="o">+</span> <span class="n">encryptor</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">decryptor</span> <span class="o">=</span> <span class="n">cipher</span><span class="o">.</span><span class="n">decryptor</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">decryptor</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ct</span><span class="p">)</span> <span class="o">+</span> <span class="n">decryptor</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+<span class="go">b'a secret message'</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>algorithm</strong> – A
+<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.CipherAlgorithm" title="cryptography.hazmat.primitives.ciphers.CipherAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">CipherAlgorithm</span></code></a>
+instance such as those described
+<a class="reference internal" href="#symmetric-encryption-algorithms"><span class="std std-ref">below</span></a>.</p></li>
+<li><p><strong>mode</strong> – A <a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.Mode" title="cryptography.hazmat.primitives.ciphers.modes.Mode"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mode</span></code></a>
+instance such as those described
+<a class="reference internal" href="#symmetric-encryption-modes"><span class="std std-ref">below</span></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../../../exceptions/#cryptography.exceptions.UnsupportedAlgorithm" title="cryptography.exceptions.UnsupportedAlgorithm"><strong>cryptography.exceptions.UnsupportedAlgorithm</strong></a> – This is raised if the
+provided <code class="docutils literal notranslate"><span class="pre">algorithm</span></code> is unsupported.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.Cipher.encryptor">
+<span class="sig-name descname"><span class="pre">encryptor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/base.py#L107-L116"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.Cipher.encryptor" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An encrypting
+<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.CipherContext" title="cryptography.hazmat.primitives.ciphers.CipherContext"><code class="xref py py-class docutils literal notranslate"><span class="pre">CipherContext</span></code></a>
+instance.</p>
+</dd>
+</dl>
+<p>If the requested combination of <code class="docutils literal notranslate"><span class="pre">algorithm</span></code> and <code class="docutils literal notranslate"><span class="pre">mode</span></code> is
+unsupported an <a class="reference internal" href="../../../exceptions/#cryptography.exceptions.UnsupportedAlgorithm" title="cryptography.exceptions.UnsupportedAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnsupportedAlgorithm</span></code></a>
+exception will be raised.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.Cipher.decryptor">
+<span class="sig-name descname"><span class="pre">decryptor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/base.py#L128-L131"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.Cipher.decryptor" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A decrypting
+<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.CipherContext" title="cryptography.hazmat.primitives.ciphers.CipherContext"><code class="xref py py-class docutils literal notranslate"><span class="pre">CipherContext</span></code></a>
+instance.</p>
+</dd>
+</dl>
+<p>If the requested combination of <code class="docutils literal notranslate"><span class="pre">algorithm</span></code> and <code class="docutils literal notranslate"><span class="pre">mode</span></code> is
+unsupported an <a class="reference internal" href="../../../exceptions/#cryptography.exceptions.UnsupportedAlgorithm" title="cryptography.exceptions.UnsupportedAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnsupportedAlgorithm</span></code></a>
+exception will be raised.</p>
+</dd></dl>
+
+</dd></dl>
+
+<section id="algorithms">
+<span id="symmetric-encryption-algorithms"></span><h2>Algorithms<a class="headerlink" href="#algorithms" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.algorithms.AES">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.algorithms.</span></span><span class="sig-name descname"><span class="pre">AES</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/algorithms.py#L36-L47"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.algorithms.AES" title="Link to this definition"></a></dt>
+<dd><p>AES (Advanced Encryption Standard) is a block cipher standardized by NIST.
+AES is both fast, and cryptographically strong. It is a good default
+choice for encryption.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – The secret key. This must be kept secret. Either <code class="docutils literal notranslate"><span class="pre">128</span></code>,
+<code class="docutils literal notranslate"><span class="pre">192</span></code>, or <code class="docutils literal notranslate"><span class="pre">256</span></code> <a class="reference internal" href="../../../glossary/#term-bits"><span class="xref std std-term">bits</span></a> long.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.algorithms.AES128">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.algorithms.</span></span><span class="sig-name descname"><span class="pre">AES128</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/algorithms.py#L50-L57"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.algorithms.AES128" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 38.0.0.</span></p>
+</div>
+<p>An AES class that only accepts 128 bit keys. This is identical to the
+standard <code class="docutils literal notranslate"><span class="pre">AES</span></code> class except that it will only accept a single key length.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – The secret key. This must be kept secret. <code class="docutils literal notranslate"><span class="pre">128</span></code>
+<a class="reference internal" href="../../../glossary/#term-bits"><span class="xref std std-term">bits</span></a> long.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.algorithms.AES256">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.algorithms.</span></span><span class="sig-name descname"><span class="pre">AES256</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/algorithms.py#L60-L67"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.algorithms.AES256" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 38.0.0.</span></p>
+</div>
+<p>An AES class that only accepts 256 bit keys. This is identical to the
+standard <code class="docutils literal notranslate"><span class="pre">AES</span></code> class except that it will only accept a single key length.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – The secret key. This must be kept secret. <code class="docutils literal notranslate"><span class="pre">256</span></code>
+<a class="reference internal" href="../../../glossary/#term-bits"><span class="xref std std-term">bits</span></a> long.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.algorithms.Camellia">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.algorithms.</span></span><span class="sig-name descname"><span class="pre">Camellia</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/decrepit/ciphers/algorithms.py#L120-L130"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.algorithms.Camellia" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This algorithm has been deprecated and moved to the <a class="reference internal" href="../../decrepit/"><span class="doc">Decrepit cryptography</span></a>
+module. If you need to continue using it then update your code to
+use the new module path. It will be removed from this namespace in 49.0.0.</p>
+</div>
+<p>Camellia is a block cipher approved for use by <a class="reference external" href="https://www.cryptrec.go.jp/en/">CRYPTREC</a> and ISO/IEC.
+It is considered to have comparable security and performance to AES but
+is not as widely studied or deployed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – The secret key. This must be kept secret. Either <code class="docutils literal notranslate"><span class="pre">128</span></code>,
+<code class="docutils literal notranslate"><span class="pre">192</span></code>, or <code class="docutils literal notranslate"><span class="pre">256</span></code> <a class="reference internal" href="../../../glossary/#term-bits"><span class="xref std std-term">bits</span></a> long.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.algorithms.ChaCha20">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.algorithms.</span></span><span class="sig-name descname"><span class="pre">ChaCha20</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nonce</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/algorithms.py#L106-L125"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.algorithms.ChaCha20" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1.</span></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In most cases users should use
+<a class="reference internal" href="../aead/#cryptography.hazmat.primitives.ciphers.aead.ChaCha20Poly1305" title="cryptography.hazmat.primitives.ciphers.aead.ChaCha20Poly1305"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChaCha20Poly1305</span></code></a>
+instead of this class. <cite>ChaCha20</cite> alone does not provide integrity
+so it must be combined with a MAC to be secure.
+<a class="reference internal" href="../aead/#cryptography.hazmat.primitives.ciphers.aead.ChaCha20Poly1305" title="cryptography.hazmat.primitives.ciphers.aead.ChaCha20Poly1305"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChaCha20Poly1305</span></code></a>
+does this for you.</p>
+</div>
+<p>ChaCha20 is a stream cipher used in several IETF protocols. It is
+standardized in <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7539.html"><strong>RFC 7539</strong></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – The secret key. This must be kept secret. <code class="docutils literal notranslate"><span class="pre">256</span></code>
+<a class="reference internal" href="../../../glossary/#term-bits"><span class="xref std std-term">bits</span></a> (32 bytes) in length.</p></li>
+<li><p><strong>nonce</strong> (<a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – Should be unique, a <a class="reference internal" href="../../../glossary/#term-nonce"><span class="xref std std-term">nonce</span></a>. It is
+critical to never reuse a <code class="docutils literal notranslate"><span class="pre">nonce</span></code> with a given key. Any reuse of a
+nonce with the same key compromises the security of every message
+encrypted with that key. The nonce does not need to be kept secret
+and may be included with the ciphertext. This must be <code class="docutils literal notranslate"><span class="pre">128</span></code>
+<a class="reference internal" href="../../../glossary/#term-bits"><span class="xref std std-term">bits</span></a> in length. The 128-bit value is a concatenation of a
+4-byte little-endian block counter followed by a 12-byte nonce, as
+described in <span class="target" id="index-1"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7539.html"><strong>RFC 7539</strong></a>.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The first 4 bytes of the 128-bit value are a 32-bit little-endian block
+counter and the remaining 12 bytes are the nonce. Each ChaCha20 block
+encrypts 64 bytes, so an initial counter of <code class="docutils literal notranslate"><span class="pre">n</span></code> allows
+<code class="docutils literal notranslate"><span class="pre">(2</span> <span class="pre">**</span> <span class="pre">32</span> <span class="pre">-</span> <span class="pre">n)</span> <span class="pre">*</span> <span class="pre">64</span></code> bytes to be encrypted before the counter would
+overflow, at which point a <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a> is raised. If you are
+encrypting a single message and do not need to resume from a particular
+point in the keystream, start the counter at zero; this gives you the
+full 256 GiB of keystream for that nonce. If you are continuing a
+stream from a known position you will need to concatenate the counter
+and nonce yourself before passing them.</p>
+</div>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">struct</span><span class="o">,</span><span class="w"> </span><span class="nn">os</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">cryptography.hazmat.primitives.ciphers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Cipher</span><span class="p">,</span> <span class="n">algorithms</span><span class="p">,</span> <span class="n">modes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">urandom</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nonce</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">"&lt;I"</span><span class="p">,</span> <span class="n">counter</span><span class="p">)</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">urandom</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">algorithm</span> <span class="o">=</span> <span class="n">algorithms</span><span class="o">.</span><span class="n">ChaCha20</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">nonce</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cipher</span> <span class="o">=</span> <span class="n">Cipher</span><span class="p">(</span><span class="n">algorithm</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encryptor</span> <span class="o">=</span> <span class="n">cipher</span><span class="o">.</span><span class="n">encryptor</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ct</span> <span class="o">=</span> <span class="n">encryptor</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="sa">b</span><span class="s2">"a secret message"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">decryptor</span> <span class="o">=</span> <span class="n">cipher</span><span class="o">.</span><span class="n">decryptor</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">decryptor</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ct</span><span class="p">)</span>
+<span class="go">b'a secret message'</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.algorithms.TripleDES">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.algorithms.</span></span><span class="sig-name descname"><span class="pre">TripleDES</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/decrepit/ciphers/algorithms.py#L29-L60"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.algorithms.TripleDES" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This algorithm has been deprecated and moved to the <a class="reference internal" href="../../decrepit/"><span class="doc">Decrepit cryptography</span></a>
+module. If you need to continue using it then update your code to
+use the new module path. It will be removed from this namespace in 48.0.0.</p>
+</div>
+<p>Triple DES (Data Encryption Standard), sometimes referred to as 3DES, is a
+block cipher standardized by NIST. Triple DES has known crypto-analytic
+flaws, however none of them currently enable a practical attack.
+Nonetheless, Triple DES is not recommended for new applications because it
+is incredibly slow; old applications should consider moving away from it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – The secret key. This must be kept secret. Either <code class="docutils literal notranslate"><span class="pre">64</span></code>,
+<code class="docutils literal notranslate"><span class="pre">128</span></code>, or <code class="docutils literal notranslate"><span class="pre">192</span></code> <a class="reference internal" href="../../../glossary/#term-bits"><span class="xref std std-term">bits</span></a> long. DES only uses <code class="docutils literal notranslate"><span class="pre">56</span></code>, <code class="docutils literal notranslate"><span class="pre">112</span></code>,
+or <code class="docutils literal notranslate"><span class="pre">168</span></code> bits of the key as there is a parity byte in each component
+of the key.  Some writing refers to there being up to three separate
+keys that are each <code class="docutils literal notranslate"><span class="pre">56</span></code> bits long, they can simply be concatenated
+to produce the full key.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.algorithms.SM4">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.algorithms.</span></span><span class="sig-name descname"><span class="pre">SM4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/algorithms.py#L128-L138"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.algorithms.SM4" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 35.0.0.</span></p>
+</div>
+<p>SM4 is a block cipher developed by the Chinese Government and standardized
+in the GB/T 32907-2016. It is used in the Chinese WAPI
+(Wired Authentication and Privacy Infrastructure) standard. (An English
+description is available at <a class="reference external" href="https://datatracker.ietf.org/doc/html/draft-ribose-cfrg-sm4-10">draft-ribose-cfrg-sm4-10</a>.) This block
+cipher should be used for compatibility purposes where required and is
+not otherwise recommended for use.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – The secret key. This must be kept secret. <code class="docutils literal notranslate"><span class="pre">128</span></code>
+<a class="reference internal" href="../../../glossary/#term-bits"><span class="xref std std-term">bits</span></a> in length.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="weak-ciphers">
+<h3>Weak ciphers<a class="headerlink" href="#weak-ciphers" title="Link to this heading"></a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>These ciphers are considered weak for a variety of reasons. New
+applications should avoid their use and existing applications should
+strongly consider migrating away.</p>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.algorithms.ARC4">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.algorithms.</span></span><span class="sig-name descname"><span class="pre">ARC4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/decrepit/ciphers/algorithms.py#L17-L26"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.algorithms.ARC4" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This algorithm has been deprecated and moved to the <a class="reference internal" href="../../decrepit/"><span class="doc">Decrepit cryptography</span></a>
+module. If you need to continue using it then update your code to
+use the new module path. It will be removed from this namespace in 48.0.0.</p>
+</div>
+<p>ARC4 (Alleged RC4) is a stream cipher with serious weaknesses in its
+initial stream output. Its use is strongly discouraged. ARC4 does not use
+mode constructions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – The secret key. This must be kept secret. Either <code class="docutils literal notranslate"><span class="pre">40</span></code>,
+<code class="docutils literal notranslate"><span class="pre">56</span></code>, <code class="docutils literal notranslate"><span class="pre">64</span></code>, <code class="docutils literal notranslate"><span class="pre">80</span></code>, <code class="docutils literal notranslate"><span class="pre">128</span></code>, <code class="docutils literal notranslate"><span class="pre">192</span></code>, or <code class="docutils literal notranslate"><span class="pre">256</span></code> <a class="reference internal" href="../../../glossary/#term-bits"><span class="xref std std-term">bits</span></a> in
+length.</p>
+</dd>
+</dl>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">cryptography.hazmat.primitives.ciphers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Cipher</span><span class="p">,</span> <span class="n">algorithms</span><span class="p">,</span> <span class="n">modes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">algorithm</span> <span class="o">=</span> <span class="n">algorithms</span><span class="o">.</span><span class="n">ARC4</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cipher</span> <span class="o">=</span> <span class="n">Cipher</span><span class="p">(</span><span class="n">algorithm</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encryptor</span> <span class="o">=</span> <span class="n">cipher</span><span class="o">.</span><span class="n">encryptor</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ct</span> <span class="o">=</span> <span class="n">encryptor</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="sa">b</span><span class="s2">"a secret message"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">decryptor</span> <span class="o">=</span> <span class="n">cipher</span><span class="o">.</span><span class="n">decryptor</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">decryptor</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ct</span><span class="p">)</span>
+<span class="go">b'a secret message'</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+<section id="module-cryptography.hazmat.primitives.ciphers.modes">
+<span id="modes"></span><span id="symmetric-encryption-modes"></span><h2>Modes<a class="headerlink" href="#module-cryptography.hazmat.primitives.ciphers.modes" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.modes.CBC">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.modes.</span></span><span class="sig-name descname"><span class="pre">CBC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initialization_vector</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/modes.py#L39-L50"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.modes.CBC" title="Link to this definition"></a></dt>
+<dd><p>CBC (Cipher Block Chaining) is a mode of operation for block ciphers. It is
+considered cryptographically strong.</p>
+<p><strong>Padding is required when using this mode.</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>initialization_vector</strong> (<a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – Must be <a class="reference internal" href="../../../random-numbers/"><span class="doc">random bytes</span></a>. They do not need to be kept secret and they can be
+included in a transmitted message. Must be the same number of bytes as
+the <code class="docutils literal notranslate"><span class="pre">block_size</span></code> of the cipher. Each time something is encrypted a
+new <code class="docutils literal notranslate"><span class="pre">initialization_vector</span></code> should be generated. Do not reuse an
+<code class="docutils literal notranslate"><span class="pre">initialization_vector</span></code> with a given <code class="docutils literal notranslate"><span class="pre">key</span></code>, and particularly do not
+use a constant <code class="docutils literal notranslate"><span class="pre">initialization_vector</span></code>.</p>
+</dd>
+</dl>
+<p>A good construction looks like:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">cryptography.hazmat.primitives.ciphers.modes</span><span class="w"> </span><span class="kn">import</span> <span class="n">CBC</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">urandom</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mode</span> <span class="o">=</span> <span class="n">CBC</span><span class="p">(</span><span class="n">iv</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>While the following is bad and will leak information:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">cryptography.hazmat.primitives.ciphers.modes</span><span class="w"> </span><span class="kn">import</span> <span class="n">CBC</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"a"</span> <span class="o">*</span> <span class="mi">16</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mode</span> <span class="o">=</span> <span class="n">CBC</span><span class="p">(</span><span class="n">iv</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.modes.CTR">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.modes.</span></span><span class="sig-name descname"><span class="pre">CTR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nonce</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/modes.py#L88-L101"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.modes.CTR" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Counter mode is not recommended for use with block ciphers that have a
+block size of less than 128-<a class="reference internal" href="../../../glossary/#term-bits"><span class="xref std std-term">bits</span></a>.</p>
+</div>
+<p>CTR (Counter) is a mode of operation for block ciphers. It is considered
+cryptographically strong. It transforms a block cipher into a stream
+cipher.</p>
+<p><strong>This mode does not require padding.</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nonce</strong> (<a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – Should be unique, a <a class="reference internal" href="../../../glossary/#term-nonce"><span class="xref std std-term">nonce</span></a>. It is
+critical to never reuse a <code class="docutils literal notranslate"><span class="pre">nonce</span></code> with a given key.  Any reuse of a
+nonce with the same key compromises the security of every message
+encrypted with that key. Must be the same number of bytes as the
+<code class="docutils literal notranslate"><span class="pre">block_size</span></code> of the cipher with a given key. The nonce does not need
+to be kept secret and may be included with the ciphertext.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.modes.OFB">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.modes.</span></span><span class="sig-name descname"><span class="pre">OFB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initialization_vector</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/decrepit/ciphers/modes.py#L14-L25"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.modes.OFB" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This algorithm has been deprecated and moved to the <a class="reference internal" href="../../decrepit/"><span class="doc">Decrepit cryptography</span></a>
+module. If you need to continue using it then update your code to
+use the new module path. It will be removed from this namespace in 49.0.0.</p>
+</div>
+<p>OFB (Output Feedback) is a mode of operation for block ciphers. It
+transforms a block cipher into a stream cipher.</p>
+<p><strong>This mode does not require padding.</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>initialization_vector</strong> (<a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – Must be <a class="reference internal" href="../../../random-numbers/"><span class="doc">random bytes</span></a>. They do not need to be kept secret and they can be
+included in a transmitted message. Must be the same number of bytes as
+the <code class="docutils literal notranslate"><span class="pre">block_size</span></code> of the cipher. Do not reuse an
+<code class="docutils literal notranslate"><span class="pre">initialization_vector</span></code> with a given <code class="docutils literal notranslate"><span class="pre">key</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.modes.CFB">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.modes.</span></span><span class="sig-name descname"><span class="pre">CFB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initialization_vector</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/decrepit/ciphers/modes.py#L28-L39"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.modes.CFB" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This algorithm has been deprecated and moved to the <a class="reference internal" href="../../decrepit/"><span class="doc">Decrepit cryptography</span></a>
+module. If you need to continue using it then update your code to
+use the new module path. It will be removed from this namespace in 49.0.0.</p>
+</div>
+<p>CFB (Cipher Feedback) is a mode of operation for block ciphers. It
+transforms a block cipher into a stream cipher.</p>
+<p><strong>This mode does not require padding.</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>initialization_vector</strong> (<a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – Must be <a class="reference internal" href="../../../random-numbers/"><span class="doc">random bytes</span></a>. They do not need to be kept secret and they can be
+included in a transmitted message. Must be the same number of bytes as
+the <code class="docutils literal notranslate"><span class="pre">block_size</span></code> of the cipher. Do not reuse an
+<code class="docutils literal notranslate"><span class="pre">initialization_vector</span></code> with a given <code class="docutils literal notranslate"><span class="pre">key</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.modes.CFB8">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.modes.</span></span><span class="sig-name descname"><span class="pre">CFB8</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initialization_vector</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/decrepit/ciphers/modes.py#L42-L53"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.modes.CFB8" title="Link to this definition"></a></dt>
+<dd><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This algorithm has been deprecated and moved to the <a class="reference internal" href="../../decrepit/"><span class="doc">Decrepit cryptography</span></a>
+module. If you need to continue using it then update your code to
+use the new module path. It will be removed from this namespace in 49.0.0.</p>
+</div>
+<p>CFB (Cipher Feedback) is a mode of operation for block ciphers. It
+transforms a block cipher into a stream cipher. The CFB8 variant uses an
+8-bit shift register.</p>
+<p><strong>This mode does not require padding.</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>initialization_vector</strong> (<a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – Must be <a class="reference internal" href="../../../random-numbers/"><span class="doc">random bytes</span></a>. They do not need to be kept secret and they can be
+included in a transmitted message. Must be the same number of bytes as
+the <code class="docutils literal notranslate"><span class="pre">block_size</span></code> of the cipher. Do not reuse an
+<code class="docutils literal notranslate"><span class="pre">initialization_vector</span></code> with a given <code class="docutils literal notranslate"><span class="pre">key</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.modes.GCM">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.modes.</span></span><span class="sig-name descname"><span class="pre">GCM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initialization_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_tag_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/modes.py#L104-L156"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.modes.GCM" title="Link to this definition"></a></dt>
+<dd><div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>If you are encrypting data that can fit into memory you should strongly
+consider using
+<a class="reference internal" href="../aead/#cryptography.hazmat.primitives.ciphers.aead.AESGCM" title="cryptography.hazmat.primitives.ciphers.aead.AESGCM"><code class="xref py py-class docutils literal notranslate"><span class="pre">AESGCM</span></code></a> instead
+of this.</p>
+<p>When using this mode you <strong>must</strong> not use the decrypted data until
+the appropriate finalization method
+(<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.CipherContext.finalize" title="cryptography.hazmat.primitives.ciphers.CipherContext.finalize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">finalize()</span></code></a>
+or
+<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.AEADDecryptionContext.finalize_with_tag" title="cryptography.hazmat.primitives.ciphers.AEADDecryptionContext.finalize_with_tag"><code class="xref py py-meth docutils literal notranslate"><span class="pre">finalize_with_tag()</span></code></a>)
+has been called. GCM provides <strong>no</strong> guarantees of ciphertext integrity
+until decryption is complete.</p>
+</div>
+<p>GCM (Galois Counter Mode) is a mode of operation for block ciphers. An
+AEAD (authenticated encryption with additional data) mode is a type of
+block cipher mode that simultaneously encrypts the message as well as
+authenticating it. Additional unencrypted data may also be authenticated.
+Additional means of verifying integrity such as
+<a class="reference internal" href="../mac/hmac/"><span class="doc">HMAC</span></a> are not necessary.</p>
+<p><strong>This mode does not require padding.</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>initialization_vector</strong> (<a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – Must be unique, a <a class="reference internal" href="../../../glossary/#term-nonce"><span class="xref std std-term">nonce</span></a>.
+They do not need to be kept secret and they can be included in a
+transmitted message. NIST <a class="reference external" href="https://csrc.nist.gov/pubs/sp/800/38/d/final">recommends a 96-bit IV length</a> for
+performance critical situations but it can be up to 2<sup>64</sup> - 1
+<a class="reference internal" href="../../../glossary/#term-bits"><span class="xref std std-term">bits</span></a>. Do not reuse an <code class="docutils literal notranslate"><span class="pre">initialization_vector</span></code> with a given
+<code class="docutils literal notranslate"><span class="pre">key</span></code>.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Cryptography will generate a 128-bit tag when finalizing encryption.
+You can shorten a tag by truncating it to the desired length but this
+is <strong>not recommended</strong> as it makes it easier to forge messages, and
+also potentially leaks the key (<a class="reference external" href="https://csrc.nist.gov/publications/detail/sp/800-38d/final">NIST SP-800-38D</a> recommends
+96-<a class="reference internal" href="../../../glossary/#term-bits"><span class="xref std std-term">bits</span></a> or greater).  Applications wishing to allow truncation
+can pass the <code class="docutils literal notranslate"><span class="pre">min_tag_length</span></code> parameter.</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.5: </span>The <code class="docutils literal notranslate"><span class="pre">min_tag_length</span></code> parameter was added in <code class="docutils literal notranslate"><span class="pre">0.5</span></code>, previously
+truncation down to <code class="docutils literal notranslate"><span class="pre">4</span></code> bytes was always allowed.</p>
+</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><em>bytes</em></a>) – The tag bytes to verify during decryption. When
+encrypting this must be <code class="docutils literal notranslate"><span class="pre">None</span></code>. When decrypting, it may be <code class="docutils literal notranslate"><span class="pre">None</span></code>
+if the tag is supplied on finalization using
+<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.AEADDecryptionContext.finalize_with_tag" title="cryptography.hazmat.primitives.ciphers.AEADDecryptionContext.finalize_with_tag"><code class="xref py py-meth docutils literal notranslate"><span class="pre">finalize_with_tag()</span></code></a>.
+Otherwise, the tag is mandatory.</p></li>
+<li><p><strong>min_tag_length</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – The minimum length <code class="docutils literal notranslate"><span class="pre">tag</span></code> must be. By default
+this is <code class="docutils literal notranslate"><span class="pre">16</span></code>, meaning tag truncation is not allowed. Allowing tag
+truncation is strongly discouraged for most applications.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – This is raised if <code class="docutils literal notranslate"><span class="pre">len(tag)</span> <span class="pre">&lt;</span> <span class="pre">min_tag_length</span></code> or the
+<code class="docutils literal notranslate"><span class="pre">initialization_vector</span></code> is too short.</p>
+</dd>
+</dl>
+<p>An example of securely encrypting and decrypting data with <code class="docutils literal notranslate"><span class="pre">AES</span></code> in the
+<code class="docutils literal notranslate"><span class="pre">GCM</span></code> mode looks like:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">cryptography.hazmat.primitives.ciphers</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Cipher</span><span class="p">,</span> <span class="n">algorithms</span><span class="p">,</span> <span class="n">modes</span>
+<span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">encrypt</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">plaintext</span><span class="p">,</span> <span class="n">associated_data</span><span class="p">):</span>
+    <span class="c1"># Generate a random 96-bit IV.</span>
+    <span class="n">iv</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">urandom</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+
+    <span class="c1"># Construct an AES-GCM Cipher object with the given key and a</span>
+    <span class="c1"># randomly generated IV.</span>
+    <span class="n">encryptor</span> <span class="o">=</span> <span class="n">Cipher</span><span class="p">(</span>
+        <span class="n">algorithms</span><span class="o">.</span><span class="n">AES</span><span class="p">(</span><span class="n">key</span><span class="p">),</span>
+        <span class="n">modes</span><span class="o">.</span><span class="n">GCM</span><span class="p">(</span><span class="n">iv</span><span class="p">),</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">encryptor</span><span class="p">()</span>
+
+    <span class="c1"># associated_data will be authenticated but not encrypted,</span>
+    <span class="c1"># it must also be passed in on decryption.</span>
+    <span class="n">encryptor</span><span class="o">.</span><span class="n">authenticate_additional_data</span><span class="p">(</span><span class="n">associated_data</span><span class="p">)</span>
+
+    <span class="c1"># Encrypt the plaintext and get the associated ciphertext.</span>
+    <span class="c1"># GCM does not require padding.</span>
+    <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">encryptor</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">plaintext</span><span class="p">)</span> <span class="o">+</span> <span class="n">encryptor</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">iv</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">,</span> <span class="n">encryptor</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">decrypt</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">associated_data</span><span class="p">,</span> <span class="n">iv</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="c1"># Construct a Cipher object, with the key, iv, and additionally the</span>
+    <span class="c1"># GCM tag used for authenticating the message.</span>
+    <span class="n">decryptor</span> <span class="o">=</span> <span class="n">Cipher</span><span class="p">(</span>
+        <span class="n">algorithms</span><span class="o">.</span><span class="n">AES</span><span class="p">(</span><span class="n">key</span><span class="p">),</span>
+        <span class="n">modes</span><span class="o">.</span><span class="n">GCM</span><span class="p">(</span><span class="n">iv</span><span class="p">,</span> <span class="n">tag</span><span class="p">),</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">decryptor</span><span class="p">()</span>
+
+    <span class="c1"># We put associated_data back in or the tag will fail to verify</span>
+    <span class="c1"># when we finalize the decryptor.</span>
+    <span class="n">decryptor</span><span class="o">.</span><span class="n">authenticate_additional_data</span><span class="p">(</span><span class="n">associated_data</span><span class="p">)</span>
+
+    <span class="c1"># Decryption gets us the authenticated plaintext.</span>
+    <span class="c1"># If the tag does not match an InvalidTag exception will be raised.</span>
+    <span class="k">return</span> <span class="n">decryptor</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">)</span> <span class="o">+</span> <span class="n">decryptor</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+
+<span class="n">iv</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="n">encrypt</span><span class="p">(</span>
+    <span class="n">key</span><span class="p">,</span>
+    <span class="sa">b</span><span class="s2">"a secret message!"</span><span class="p">,</span>
+    <span class="sa">b</span><span class="s2">"authenticated but not encrypted payload"</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">decrypt</span><span class="p">(</span>
+    <span class="n">key</span><span class="p">,</span>
+    <span class="sa">b</span><span class="s2">"authenticated but not encrypted payload"</span><span class="p">,</span>
+    <span class="n">iv</span><span class="p">,</span>
+    <span class="n">ciphertext</span><span class="p">,</span>
+    <span class="n">tag</span>
+<span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>b'a secret message!'
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.modes.XTS">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.modes.</span></span><span class="sig-name descname"><span class="pre">XTS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tweak</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/modes.py#L53-L79"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.modes.XTS" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1.</span></p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>XTS mode is meant for disk encryption and should not be used in other
+contexts. <code class="docutils literal notranslate"><span class="pre">cryptography</span></code> only supports XTS mode with
+<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.algorithms.AES" title="cryptography.hazmat.primitives.ciphers.algorithms.AES"><code class="xref py py-class docutils literal notranslate"><span class="pre">AES</span></code></a>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>AES XTS keys are double length. This means that to do AES-128
+encryption in XTS mode you need a 256-bit key. Similarly, AES-256
+requires passing a 512-bit key. AES 192 is not supported in XTS mode.</p>
+</div>
+<p>XTS (XEX-based tweaked-codebook mode with ciphertext stealing) is a mode
+of operation for the AES block cipher that is used for <a class="reference external" href="https://en.wikipedia.org/wiki/Disk_encryption_theory#XTS">disk encryption</a>.</p>
+<p><strong>This mode does not require padding.</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tweak</strong> (<a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – The tweak is a 16 byte value typically derived from
+something like the disk sector number. A given <code class="docutils literal notranslate"><span class="pre">(tweak,</span> <span class="pre">key)</span></code> pair
+should not be reused, although doing so is less catastrophic than
+in CTR mode.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="insecure-modes">
+<h3>Insecure modes<a class="headerlink" href="#insecure-modes" title="Link to this heading"></a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>These modes are insecure. New applications should never make use of them,
+and existing applications should strongly consider migrating away.</p>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.modes.ECB">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.modes.</span></span><span class="sig-name descname"><span class="pre">ECB</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/modes.py#L82-L85"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.modes.ECB" title="Link to this definition"></a></dt>
+<dd><p>ECB (Electronic Code Book) is the simplest mode of operation for block
+ciphers. Each block of data is encrypted in the same way. This means
+identical plaintext blocks will always result in identical ciphertext
+blocks, which can leave <a class="reference external" href="https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Electronic_codebook_(ECB)">significant patterns in the output</a>.</p>
+<p><strong>Padding is required when using this mode.</strong></p>
+</dd></dl>
+
+</section>
+</section>
+<section id="interfaces">
+<h2>Interfaces<a class="headerlink" href="#interfaces" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.CipherContext">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.</span></span><span class="sig-name descname"><span class="pre">CipherContext</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/base.py#L16-L43"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.CipherContext" title="Link to this definition"></a></dt>
+<dd><p>When calling <code class="docutils literal notranslate"><span class="pre">encryptor()</span></code> or <code class="docutils literal notranslate"><span class="pre">decryptor()</span></code> on a <code class="docutils literal notranslate"><span class="pre">Cipher</span></code> object
+the result will conform to the <code class="docutils literal notranslate"><span class="pre">CipherContext</span></code> interface. You can then
+call <code class="docutils literal notranslate"><span class="pre">update(data)</span></code> with data until you have fed everything into the
+context. Once that is done call <code class="docutils literal notranslate"><span class="pre">finalize()</span></code> to finish the operation and
+obtain the remainder of the data.</p>
+<p>Block ciphers require that the plaintext or ciphertext always be a multiple
+of their block size. Because of that <strong>padding</strong> is sometimes required to
+make a message the correct size. <code class="docutils literal notranslate"><span class="pre">CipherContext</span></code> will not automatically
+apply any padding; you’ll need to add your own. For block ciphers the
+recommended padding is
+<a class="reference internal" href="../padding/#cryptography.hazmat.primitives.padding.PKCS7" title="cryptography.hazmat.primitives.padding.PKCS7"><code class="xref py py-class docutils literal notranslate"><span class="pre">PKCS7</span></code></a>. If you are using a
+stream cipher mode (such as
+<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.CTR" title="cryptography.hazmat.primitives.ciphers.modes.CTR"><code class="xref py py-class docutils literal notranslate"><span class="pre">CTR</span></code></a>) you don’t have
+to worry about this.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.CipherContext.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/base.py#L17-L22"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.CipherContext.update" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – The data you wish to pass into the context.</p>
+</dd>
+<dt class="field-even">Return bytes<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns the data that was encrypted or decrypted.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../../exceptions/#cryptography.exceptions.AlreadyFinalized" title="cryptography.exceptions.AlreadyFinalized"><strong>cryptography.exceptions.AlreadyFinalized</strong></a> – See <a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.CipherContext.finalize" title="cryptography.hazmat.primitives.ciphers.CipherContext.finalize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">finalize()</span></code></a></p>
+</dd>
+</dl>
+<p>When the <code class="docutils literal notranslate"><span class="pre">Cipher</span></code> was constructed in a mode that turns it into a
+stream cipher (e.g.
+<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.CTR" title="cryptography.hazmat.primitives.ciphers.modes.CTR"><code class="xref py py-class docutils literal notranslate"><span class="pre">CTR</span></code></a>), this will
+return bytes immediately, however in other modes it will return chunks
+whose size is determined by the cipher’s block size.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.CipherContext.update_into">
+<span class="sig-name descname"><span class="pre">update_into</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buf</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/base.py#L24-L29"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.CipherContext.update_into" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 1.8.</span></p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This method allows you to avoid a memory copy by passing a writable
+buffer and reading the resulting data. You are responsible for
+correctly sizing the buffer and properly handling the data. This
+method should only be used when extremely high performance is a
+requirement and you will be making many small calls to
+<code class="docutils literal notranslate"><span class="pre">update_into</span></code>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – The data you wish to pass into the context.</p></li>
+<li><p><strong>buf</strong> – A writable Python buffer that the data will be written
+into. This buffer should be <code class="docutils literal notranslate"><span class="pre">len(data)</span> <span class="pre">+</span> <span class="pre">n</span> <span class="pre">-</span> <span class="pre">1</span></code> bytes where <code class="docutils literal notranslate"><span class="pre">n</span></code>
+is the block size (in bytes) of the cipher and mode combination.
+<code class="docutils literal notranslate"><span class="pre">buf</span></code> must not overlap <code class="docutils literal notranslate"><span class="pre">data</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return int<span class="colon">:</span></dt>
+<dd class="field-even"><p>Number of bytes written.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – This is raised if the supplied buffer is too
+small, or if <code class="docutils literal notranslate"><span class="pre">buf</span></code> overlaps <code class="docutils literal notranslate"><span class="pre">data</span></code>.</p>
+</dd>
+</dl>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">cryptography.hazmat.primitives.ciphers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Cipher</span><span class="p">,</span> <span class="n">algorithms</span><span class="p">,</span> <span class="n">modes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">urandom</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iv</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">urandom</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cipher</span> <span class="o">=</span> <span class="n">Cipher</span><span class="p">(</span><span class="n">algorithms</span><span class="o">.</span><span class="n">AES</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="n">modes</span><span class="o">.</span><span class="n">CBC</span><span class="p">(</span><span class="n">iv</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encryptor</span> <span class="o">=</span> <span class="n">cipher</span><span class="o">.</span><span class="n">encryptor</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># the buffer needs to be at least len(data) + n - 1 where n is cipher/mode block size in bytes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">buf</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="mi">31</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">len_encrypted</span> <span class="o">=</span> <span class="n">encryptor</span><span class="o">.</span><span class="n">update_into</span><span class="p">(</span><span class="sa">b</span><span class="s2">"a secret message"</span><span class="p">,</span> <span class="n">buf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># get the ciphertext from the buffer reading only the bytes written to it (len_encrypted)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ct</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">buf</span><span class="p">[:</span><span class="n">len_encrypted</span><span class="p">])</span> <span class="o">+</span> <span class="n">encryptor</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">decryptor</span> <span class="o">=</span> <span class="n">cipher</span><span class="o">.</span><span class="n">decryptor</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">len_decrypted</span> <span class="o">=</span> <span class="n">decryptor</span><span class="o">.</span><span class="n">update_into</span><span class="p">(</span><span class="n">ct</span><span class="p">,</span> <span class="n">buf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># get the plaintext from the buffer reading only the bytes written (len_decrypted)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">bytes</span><span class="p">(</span><span class="n">buf</span><span class="p">[:</span><span class="n">len_decrypted</span><span class="p">])</span> <span class="o">+</span> <span class="n">decryptor</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+<span class="go">b'a secret message'</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.CipherContext.finalize">
+<span class="sig-name descname"><span class="pre">finalize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/base.py#L31-L35"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.CipherContext.finalize" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return bytes<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns the remainder of the data.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – This is raised when the data provided isn’t
+a multiple of the algorithm’s block size.</p>
+</dd>
+</dl>
+<p>Once <code class="docutils literal notranslate"><span class="pre">finalize</span></code> is called this object can no longer be used and
+<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.CipherContext.update" title="cryptography.hazmat.primitives.ciphers.CipherContext.update"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update()</span></code></a> and <a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.CipherContext.finalize" title="cryptography.hazmat.primitives.ciphers.CipherContext.finalize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">finalize()</span></code></a> will raise an
+<a class="reference internal" href="../../../exceptions/#cryptography.exceptions.AlreadyFinalized" title="cryptography.exceptions.AlreadyFinalized"><code class="xref py py-class docutils literal notranslate"><span class="pre">AlreadyFinalized</span></code></a> exception.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.CipherContext.reset_nonce">
+<span class="sig-name descname"><span class="pre">reset_nonce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nonce</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/base.py#L37-L43"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.CipherContext.reset_nonce" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 43.0.0.</span></p>
+</div>
+<p>This method allows changing the nonce for an already existing context.
+Normally the nonce is set when the context is created and internally
+incremented as data as passed. However, in some scenarios the same key
+is used repeatedly but the nonce changes non-sequentially (e.g. <code class="docutils literal notranslate"><span class="pre">QUIC</span></code>),
+which requires updating the context with the new nonce.</p>
+<p>This method only works for contexts using
+<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.algorithms.ChaCha20" title="cryptography.hazmat.primitives.ciphers.algorithms.ChaCha20"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChaCha20</span></code></a> or
+<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.CTR" title="cryptography.hazmat.primitives.ciphers.modes.CTR"><code class="xref py py-class docutils literal notranslate"><span class="pre">CTR</span></code></a> mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nonce</strong> – The nonce to update the context with.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="../../../exceptions/#cryptography.exceptions.UnsupportedAlgorithm" title="cryptography.exceptions.UnsupportedAlgorithm"><strong>cryptography.exceptions.UnsupportedAlgorithm</strong></a> – If the
+algorithm does not support updating the nonce.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the nonce is not the correct length for the
+algorithm.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.AEADCipherContext">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.</span></span><span class="sig-name descname"><span class="pre">AEADCipherContext</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/base.py#L46-L51"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.AEADCipherContext" title="Link to this definition"></a></dt>
+<dd><p>When calling <code class="docutils literal notranslate"><span class="pre">encryptor</span></code> or <code class="docutils literal notranslate"><span class="pre">decryptor</span></code> on a <code class="docutils literal notranslate"><span class="pre">Cipher</span></code> object
+with an AEAD mode (e.g.
+<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.GCM" title="cryptography.hazmat.primitives.ciphers.modes.GCM"><code class="xref py py-class docutils literal notranslate"><span class="pre">GCM</span></code></a>) the result will
+conform to the <code class="docutils literal notranslate"><span class="pre">AEADCipherContext</span></code> and <code class="docutils literal notranslate"><span class="pre">CipherContext</span></code> interfaces. If
+it is an encryption or decryption context it will additionally be an
+<code class="docutils literal notranslate"><span class="pre">AEADEncryptionContext</span></code> or <code class="docutils literal notranslate"><span class="pre">AEADDecryptionContext</span></code> instance,
+respectively. <code class="docutils literal notranslate"><span class="pre">AEADCipherContext</span></code> contains an additional method
+<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.AEADCipherContext.authenticate_additional_data" title="cryptography.hazmat.primitives.ciphers.AEADCipherContext.authenticate_additional_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">authenticate_additional_data()</span></code></a> for adding additional authenticated
+but unencrypted data (see note below). You should call this before calls to
+<code class="docutils literal notranslate"><span class="pre">update</span></code>. When you are done call <code class="docutils literal notranslate"><span class="pre">finalize</span></code> to finish the operation.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In AEAD modes all data passed to <code class="docutils literal notranslate"><span class="pre">update()</span></code> will be both encrypted
+and authenticated. Do not pass encrypted data to the
+<code class="docutils literal notranslate"><span class="pre">authenticate_additional_data()</span></code> method. It is meant solely for
+additional data you may want to authenticate but leave unencrypted.</p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.AEADCipherContext.authenticate_additional_data">
+<span class="sig-name descname"><span class="pre">authenticate_additional_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/base.py#L47-L51"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.AEADCipherContext.authenticate_additional_data" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a>) – Any data you wish to authenticate but not encrypt.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../../../exceptions/#cryptography.exceptions.AlreadyFinalized" title="cryptography.exceptions.AlreadyFinalized"><code class="xref py py-class docutils literal notranslate"><span class="pre">AlreadyFinalized</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.AEADEncryptionContext">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.</span></span><span class="sig-name descname"><span class="pre">AEADEncryptionContext</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/base.py#L63-L70"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.AEADEncryptionContext" title="Link to this definition"></a></dt>
+<dd><p>When creating an encryption context using <code class="docutils literal notranslate"><span class="pre">encryptor</span></code> on a <code class="docutils literal notranslate"><span class="pre">Cipher</span></code>
+object with an AEAD mode such as
+<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.GCM" title="cryptography.hazmat.primitives.ciphers.modes.GCM"><code class="xref py py-class docutils literal notranslate"><span class="pre">GCM</span></code></a> an object
+conforming to both the <code class="docutils literal notranslate"><span class="pre">AEADEncryptionContext</span></code> and <code class="docutils literal notranslate"><span class="pre">AEADCipherContext</span></code>
+interfaces will be returned.  This interface provides one
+additional attribute <code class="docutils literal notranslate"><span class="pre">tag</span></code>. <code class="docutils literal notranslate"><span class="pre">tag</span></code> can only be obtained after
+<code class="docutils literal notranslate"><span class="pre">finalize</span></code> has been called.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.AEADEncryptionContext.tag">
+<span class="sig-name descname"><span class="pre">tag</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.AEADEncryptionContext.tag" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return bytes<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns the tag value as bytes.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../../../exceptions/#cryptography.exceptions.NotYetFinalized" title="cryptography.exceptions.NotYetFinalized"><code class="xref py py-class docutils literal notranslate"><span class="pre">NotYetFinalized</span></code></a> if called
+before the context is finalized.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.AEADDecryptionContext">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.</span></span><span class="sig-name descname"><span class="pre">AEADDecryptionContext</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/base.py#L54-L60"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.AEADDecryptionContext" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 1.9.</span></p>
+</div>
+<p>When creating an encryption context using <code class="docutils literal notranslate"><span class="pre">decryptor</span></code> on a <code class="docutils literal notranslate"><span class="pre">Cipher</span></code>
+object with an AEAD mode such as
+<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.GCM" title="cryptography.hazmat.primitives.ciphers.modes.GCM"><code class="xref py py-class docutils literal notranslate"><span class="pre">GCM</span></code></a> an object
+conforming to both the <code class="docutils literal notranslate"><span class="pre">AEADDecryptionContext</span></code> and <code class="docutils literal notranslate"><span class="pre">AEADCipherContext</span></code>
+interfaces will be returned.  This interface provides one additional method
+<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.AEADDecryptionContext.finalize_with_tag" title="cryptography.hazmat.primitives.ciphers.AEADDecryptionContext.finalize_with_tag"><code class="xref py py-meth docutils literal notranslate"><span class="pre">finalize_with_tag()</span></code></a> that allows passing the authentication tag for
+validation after the ciphertext has been decrypted.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.AEADDecryptionContext.finalize_with_tag">
+<span class="sig-name descname"><span class="pre">finalize_with_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/ciphers/base.py#L55-L60"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.AEADDecryptionContext.finalize_with_tag" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tag</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><em>bytes</em></a>) – The tag bytes to verify after decryption.</p>
+</dd>
+<dt class="field-even">Return bytes<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns the remainder of the data.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – This is raised when the data provided isn’t
+a multiple of the algorithm’s block size, if <code class="docutils literal notranslate"><span class="pre">min_tag_length</span></code> is
+less than 4, or if <code class="docutils literal notranslate"><span class="pre">len(tag)</span> <span class="pre">&lt;</span> <span class="pre">min_tag_length</span></code>.
+<code class="docutils literal notranslate"><span class="pre">min_tag_length</span></code> is an argument to the <code class="docutils literal notranslate"><span class="pre">GCM</span></code> constructor.</p>
+</dd>
+</dl>
+<p>If the authentication tag was not already supplied to the constructor
+of the <a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.GCM" title="cryptography.hazmat.primitives.ciphers.modes.GCM"><code class="xref py py-class docutils literal notranslate"><span class="pre">GCM</span></code></a> mode
+object, this method must be used instead of
+<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.CipherContext.finalize" title="cryptography.hazmat.primitives.ciphers.CipherContext.finalize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">finalize()</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.CipherAlgorithm">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.</span></span><span class="sig-name descname"><span class="pre">CipherAlgorithm</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/_cipheralgorithm.py#L15-L35"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.CipherAlgorithm" title="Link to this definition"></a></dt>
+<dd><p>A named symmetric encryption algorithm.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.CipherAlgorithm.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.CipherAlgorithm.name" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a></p>
+</dd>
+</dl>
+<p>The standard name for the mode, for example, “AES”, “Camellia”, or
+“Blowfish”.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.CipherAlgorithm.key_size">
+<span class="sig-name descname"><span class="pre">key_size</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.CipherAlgorithm.key_size" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
+<p>The number of <a class="reference internal" href="../../../glossary/#term-bits"><span class="xref std std-term">bits</span></a> in the key being used.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.BlockCipherAlgorithm">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.</span></span><span class="sig-name descname"><span class="pre">BlockCipherAlgorithm</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/_cipheralgorithm.py#L38-L46"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.BlockCipherAlgorithm" title="Link to this definition"></a></dt>
+<dd><p>A block cipher algorithm.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.BlockCipherAlgorithm.block_size">
+<span class="sig-name descname"><span class="pre">block_size</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.BlockCipherAlgorithm.block_size" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)">int</a></p>
+</dd>
+</dl>
+<p>The number of <a class="reference internal" href="../../../glossary/#term-bits"><span class="xref std std-term">bits</span></a> in a block.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>Interfaces used by the symmetric cipher modes described in
+<a class="reference internal" href="#symmetric-encryption-modes"><span class="std std-ref">Symmetric Encryption Modes</span></a>.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.modes.Mode">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.modes.</span></span><span class="sig-name descname"><span class="pre">Mode</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/_modes.py#L17-L30"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.modes.Mode" title="Link to this definition"></a></dt>
+<dd><p>A named cipher mode.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.modes.Mode.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.modes.Mode.name" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a></p>
+</dd>
+</dl>
+<p>This should be the standard shorthand name for the mode, for example
+Cipher-Block Chaining mode is “CBC”.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.modes.Mode.validate_for_algorithm">
+<span class="sig-name descname"><span class="pre">validate_for_algorithm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algorithm</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/_modes.py#L25-L30"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.modes.Mode.validate_for_algorithm" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>algorithm</strong> (<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.CipherAlgorithm" title="cryptography.hazmat.primitives.ciphers.CipherAlgorithm"><em>cryptography.hazmat.primitives.ciphers.CipherAlgorithm</em></a>)</p>
+</dd>
+</dl>
+<p>Checks that the combination of this mode with the provided algorithm
+meets any necessary invariants. This should raise an exception if they
+are not met.</p>
+<p>For example, the
+<a class="reference internal" href="#cryptography.hazmat.primitives.ciphers.modes.CBC" title="cryptography.hazmat.primitives.ciphers.modes.CBC"><code class="xref py py-class docutils literal notranslate"><span class="pre">CBC</span></code></a> mode uses
+this method to check that the provided initialization vector’s length
+matches the block size of the algorithm.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.modes.ModeWithInitializationVector">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.modes.</span></span><span class="sig-name descname"><span class="pre">ModeWithInitializationVector</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/_modes.py#L33-L39"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.modes.ModeWithInitializationVector" title="Link to this definition"></a></dt>
+<dd><p>A cipher mode with an initialization vector.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.modes.ModeWithInitializationVector.initialization_vector">
+<span class="sig-name descname"><span class="pre">initialization_vector</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.modes.ModeWithInitializationVector.initialization_vector" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a></p>
+</dd>
+</dl>
+<p>Exact requirements of the initialization are described by the
+documentation of individual modes.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.modes.ModeWithNonce">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.modes.</span></span><span class="sig-name descname"><span class="pre">ModeWithNonce</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/_modes.py#L51-L57"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.modes.ModeWithNonce" title="Link to this definition"></a></dt>
+<dd><p>A cipher mode with a nonce.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.modes.ModeWithNonce.nonce">
+<span class="sig-name descname"><span class="pre">nonce</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.modes.ModeWithNonce.nonce" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a></p>
+</dd>
+</dl>
+<p>Exact requirements of the nonce are described by the documentation of
+individual modes.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.modes.ModeWithAuthenticationTag">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.modes.</span></span><span class="sig-name descname"><span class="pre">ModeWithAuthenticationTag</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/_modes.py#L60-L66"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.modes.ModeWithAuthenticationTag" title="Link to this definition"></a></dt>
+<dd><p>A cipher mode with an authentication tag.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.modes.ModeWithAuthenticationTag.tag">
+<span class="sig-name descname"><span class="pre">tag</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.modes.ModeWithAuthenticationTag.tag" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a></p>
+</dd>
+</dl>
+<p>Exact requirements of the tag are described by the documentation of
+individual modes.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.modes.ModeWithTweak">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.hazmat.primitives.ciphers.modes.</span></span><span class="sig-name descname"><span class="pre">ModeWithTweak</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/hazmat/primitives/_modes.py#L42-L48"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.modes.ModeWithTweak" title="Link to this definition"></a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.1.</span></p>
+</div>
+<p>A cipher mode with a tweak.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cryptography.hazmat.primitives.ciphers.modes.ModeWithTweak.tweak">
+<span class="sig-name descname"><span class="pre">tweak</span></span><a class="headerlink" href="#cryptography.hazmat.primitives.ciphers.modes.ModeWithTweak.tweak" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../../glossary/#term-bytes-like"><span class="xref std std-term">bytes-like</span></a></p>
+</dd>
+</dl>
+<p>Exact requirements of the tweak are described by the documentation of
+individual modes.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="cryptography.exceptions.InvalidTag">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">cryptography.exceptions.</span></span><span class="sig-name descname"><span class="pre">InvalidTag</span></span><a class="reference external" href="https://github.com/pyca/cryptography/blob/main/src/cryptography/exceptions.py#L35-L36"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cryptography.exceptions.InvalidTag" title="Link to this definition"></a></dt>
+<dd><p>This is raised if an authenticated encryption tag fails to verify during
+decryption.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../cryptographic-hashes/" class="btn btn-neutral float-left" title="Message digests (Hashing)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../padding/" class="btn btn-neutral float-right" title="Symmetric Padding" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2013-2026, Individual Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

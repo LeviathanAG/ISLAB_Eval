@@ -1,8 +1,4 @@
-"""Run any manual exercise from Labs 1-6: python lab.py L1Q1 --backend pure.
-Use --list for the full index, --all for all questions. Algorithms accept custom
-inputs through classical.py, symmetric.py, public_key.py, hybrid.py, variants.py.
-"""
-import argparse
+"""Simple menu for the manual exercises from Labs 1-6."""
 import secrets
 import time
 import classical as c
@@ -222,22 +218,24 @@ def run(question,backend='pure',repeats=3,full=False):
 
 
 def main():
-    parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('question',nargs='?',choices=QUESTIONS)
-    parser.add_argument('--backend',choices=['pure','lib'],default='pure')
-    parser.add_argument('--list',action='store_true'); parser.add_argument('--all',action='store_true')
-    parser.add_argument('--repeats',type=int,default=3); parser.add_argument('--full',action='store_true')
-    args=parser.parse_args()
-    if args.list:
-        for key,value in QUESTIONS.items(): print(key,value)
-    elif args.all:
-        for key in QUESTIONS: run(key,args.backend,args.repeats,args.full)
-    elif args.question: run(args.question,args.backend,args.repeats,args.full)
-    else:
-        for key,value in QUESTIONS.items(): print(key,value)
-        question=input('Question ID: ').strip().upper()
-        if question not in QUESTIONS: parser.error('Unknown question ID')
-        run(question,args.backend,args.repeats,args.full)
+    """Choose one exercise, or run all exercises, from a menu."""
+
+    while True:
+        print("\n=== Information Security lab menu ===")
+        for key, title in QUESTIONS.items():
+            print(f"{key}: {title}")
+        print("ALL: run every exercise")
+        print("0: exit")
+        choice = input("Choose an exercise: ").strip().upper()
+        if choice == "0" or not choice:
+            return
+        if choice == "ALL":
+            for key in QUESTIONS:
+                run(key)
+        elif choice in QUESTIONS:
+            run(choice)
+        else:
+            print("Unknown exercise. Choose an ID from the menu.")
 
 
 if __name__=='__main__': main()
