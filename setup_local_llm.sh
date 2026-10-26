@@ -37,6 +37,26 @@ need_command() {
   }
 }
 
+download_file() {
+  local url="$1"
+  local output="$2"
+  if command -v curl >/dev/null 2>&1; then
+    curl -fL --retry 5 --retry-delay 3 -C - "$url" -o "$output"
+  elif command -v wget >/dev/null 2>&1; then
+    wget --tries=5 --waitretry=3 -O "$output" "$url"
+  elif command -v python3 >/dev/null 2>&1; then
+    python3 - "$url" "$output" <<'PY'
+import sys
+import urllib.request
+
+urllib.request.urlretrieve(sys.argv[1], sys.argv[2])
+PY
+  else
+    echo "Need curl, wget, or python3 to download files." >&2
+    exit 1
+  fi
+}
+
 mkdir -p "$INSTALL_ROOT"
 [[ -w "$INSTALL_ROOT" ]] || {
   echo "Cannot write to $INSTALL_ROOT. Use a writable folder or set INSTALL_ROOT." >&2
@@ -57,13 +77,12 @@ install_user_node() {
       echo "Node.js is missing or too old and OFFLINE=1 was requested." >&2
       exit 1
     }
-    need_command curl
     mkdir -p "$LOCAL_PREFIX/opt"
     local tmp
     tmp=$(mktemp -d)
-    curl -fL --retry 3 --retry-delay 2 \
+    download_file \
       "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$NODE_ARCH.tar.xz" \
-      -o "$tmp/node.tar.xz"
+      "$tmp/node.tar.xz"
     tar -xJf "$tmp/node.tar.xz" -C "$LOCAL_PREFIX/opt"
     rm -rf "$tmp"
   fi
@@ -111,12 +130,11 @@ download_model() {
     echo "Model is missing and OFFLINE=1 was requested: $model_path" >&2
     exit 1
   }
-  need_command curl
   mkdir -p "$MODEL_DIR"
   echo "Downloading about 4–6 GB: $model_file"
-  curl -fL --retry 5 --retry-delay 3 -C - \
+  download_file \
     "https://huggingface.co/$MODEL_REPO/resolve/main/$model_file" \
-    -o "$model_path.part"
+    "$model_path.part"
   mv "$model_path.part" "$model_path"
 }
 
