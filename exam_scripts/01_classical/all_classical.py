@@ -1,4 +1,4 @@
-import argparse
+"""Menu-driven copy of the complete Lab 1 classical-cipher toolkit."""
 from math import gcd
 
 ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -197,38 +197,29 @@ def candidates(cipher, known_plain='', known_cipher='', birthday=None, backend='
 
 
 def main():
-    p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('algorithm', choices=['additive','multiplicative','affine','vigenere','autokey','playfair','hill','permutation','rail','columnar','attack','infer'])
-    p.add_argument('text', nargs='?')
-    p.add_argument('--key', default='3')
-    p.add_argument('--a', type=int, default=15)
-    p.add_argument('--b', type=int, default=20)
-    p.add_argument('--decrypt', action='store_true')
-    p.add_argument('--preserve', action='store_true')
-    p.add_argument('--backend', choices=['pure','lib'], default='pure')
-    p.add_argument('--known-plain', default='')
-    p.add_argument('--known-cipher', default='')
-    p.add_argument('--birthday', type=int)
-    args = p.parse_args()
-    text = args.text if args.text is not None else input('Message: ')
-    try:
-        a = args.algorithm
-        if a in ['additive','multiplicative','affine']:
-            print(affine(text, 1 if a=='additive' else int(args.key) if a=='multiplicative' else args.a, int(args.key) if a=='additive' else 0 if a=='multiplicative' else args.b, args.decrypt,args.backend,args.preserve))
-        elif a in ['vigenere','autokey']:
-            key = ABC[int(args.key)%26] if a=='autokey' and args.key.lstrip('-').isdigit() else args.key
-            print(vigenere(text,key,args.decrypt,a=='autokey',args.backend))
-        elif a=='hill':
-            print(hill(text,[[int(x) for x in row.split(',')] for row in args.key.split(';')],args.decrypt,args.backend))
-        elif a=='playfair': print(playfair(text,args.key,args.decrypt,args.backend))
-        elif a=='permutation': print(permutation(text,[int(x) for x in args.key.split(',')],args.decrypt))
-        elif a=='rail': print(rail(text,int(args.key),args.decrypt))
-        elif a=='columnar': print(columnar(text,args.key,args.decrypt))
-        elif a=='infer': print(infer_permutation(text,args.known_cipher))
-        else:
-            for row in candidates(text,args.known_plain,args.known_cipher,args.birthday,args.backend): print(*row)
-    except ValueError as e:
-        p.error(str(e))
+    """Run the most useful Lab 1 examples without command-line options."""
+
+    while True:
+        print("\n=== Lab 1 classical ciphers ===")
+        print("1. Additive  2. Multiplicative  3. Affine")
+        print("4. Vigenere  5. Autokey  6. Playfair  7. Hill")
+        print("8. Affine known-plaintext attack  0. Exit")
+        choice = input("Choose an example: ").strip()
+        if choice == "0" or not choice:
+            return
+        text = input("Message (Enter uses a sample): ") or "Information Security"
+        try:
+            if choice == "1": print(affine(text, b=20))
+            elif choice == "2": print(affine(text, a=15))
+            elif choice == "3": print(affine(text, a=15, b=20))
+            elif choice == "4": print(vigenere(text, "dollars"))
+            elif choice == "5": print(vigenere(text, "H", autokey=True))
+            elif choice == "6": print(playfair(text, "GUIDANCE"))
+            elif choice == "7": print(hill(text, [[3, 3], [2, 7]]))
+            elif choice == "8": print(candidates(text, "AB", "GL"))
+            else: print("Invalid choice.")
+        except ValueError as exc:
+            print(f"Could not run example: {exc}")
 
 
 if __name__ == '__main__': main()

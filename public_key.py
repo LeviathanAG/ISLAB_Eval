@@ -1,7 +1,4 @@
-"""Lab 3/4 primitives: RSA/OAEP/PSS, ElGamal, Rabin, DH and P-256.
-Pure means no third-party imports; hashlib, hmac and secrets are stdlib.
-"""
-import argparse
+"""Readable RSA, ElGamal, Rabin, DH, and elliptic-curve lab primitives."""
 import hashlib
 import hmac
 import secrets
@@ -289,59 +286,57 @@ def factor(n,method='trial',limit=1000000):
 
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('algorithm',choices=['rsa','elgamal','dh','ecc','rabin','factor'])
-    p.add_argument('--message',default='Confidential Data')
-    p.add_argument('--backend',choices=['pure','lib'],default='pure')
-    p.add_argument('--bits',type=int,default=2048)
-    p.add_argument('--n',type=int,default=323); p.add_argument('--e',type=int,default=5); p.add_argument('--d',type=int,default=173)
-    p.add_argument('--p',type=int,default=7919); p.add_argument('--q',type=int,default=499)
-    p.add_argument('--g',type=int,default=2); p.add_argument('--x',type=int,default=2999); p.add_argument('--h',type=int)
-    p.add_argument('--raw',action='store_true')
-    p.add_argument('--method',choices=['trial','fermat','rho'],default='trial'); p.add_argument('--limit',type=int,default=1000000)
-    a=p.parse_args()
-    try:
-        if a.algorithm=='rsa':
-            if a.raw:
-                c=raw_rsa(a.message.encode(),a.n,a.e,a.backend); print('Ciphertext integers:',c)
-                print('Recovered:',bytes(raw_rsa(c,a.n,a.d,a.backend)).decode())
+    """Run the main public-key demonstrations from a menu."""
+
+    while True:
+        print("\n=== Public-key cryptography ===")
+        print("1. RSA-OAEP")
+        print("2. ElGamal")
+        print("3. ECC hybrid")
+        print("4. Diffie-Hellman")
+        print("5. Rabin")
+        print("6. Factor weak RSA modulus")
+        print("0. Exit")
+        choice = input("Choose an example: ").strip()
+        if choice == "0" or not choice:
+            return
+        message = input("Message (Enter uses a sample): ") or "Confidential Data"
+        try:
+            if choice == "1":
+                key = rsa_key(2048)
+                ciphertext = oaep_encrypt(message.encode(), key)
+                print("Recovered:", oaep_decrypt(ciphertext, key).decode())
+            elif choice == "2":
+                p, g, x = 7919, 2, 2999
+                h = pow(g, x, p)
+                ciphertext = elgamal_encrypt(message.encode(), p, g, h)
+                print("Recovered:", bytes(elgamal_decrypt(ciphertext, p, x)).decode())
+            elif choice == "3":
+                first, second = secrets.randbelow(N - 1) + 1, secrets.randbelow(N - 1) + 1
+                shared = ecdh(first, multiply(second))
+                assert shared == ecdh(second, multiply(first))
+                envelope = seal(message.encode(), shared)
+                print("Recovered:", unseal(envelope, shared).decode())
+            elif choice == "4":
+                first, second = secrets.randbelow(DH_P - 4) + 2, secrets.randbelow(DH_P - 4) + 2
+                first_public, second_public = modexp(2, first, DH_P), modexp(2, second, DH_P)
+                print("Shared secrets match:", dh_shared(first, second_public) == dh_shared(second, first_public))
+            elif choice == "5":
+                key = rabin_key(1024)
+                number = int.from_bytes(message.encode(), "big")
+                if number >= key["n"]:
+                    raise ValueError("Message is too large for this demonstration")
+                roots = rabin_roots(number * number % key["n"], key["p"], key["q"])
+                print("Original is among four roots:", number in roots)
+            elif choice == "6":
+                p, q, e = 1009, 1013, 65537
+                recovered_p, recovered_q = factor(p * q, "trial")
+                d = pow(e, -1, (recovered_p - 1) * (recovered_q - 1))
+                print("Recovered factors:", recovered_p, recovered_q, "private exponent:", d)
             else:
-                key=rsa_key(a.bits,a.backend); c=oaep_encrypt(a.message.encode(),key,a.backend)
-                print('Ciphertext:',c.hex()); print('Recovered:',oaep_decrypt(c,key,a.backend).decode())
-        elif a.algorithm=='elgamal':
-            if not prime(a.p): raise ValueError('p must be prime')
-            h=pow(a.g,a.x,a.p) if a.h is None else a.h
-            if h!=pow(a.g,a.x,a.p): raise ValueError(f'Inconsistent key: h should be {pow(a.g,a.x,a.p)} for this x')
-            c=elgamal_encrypt(a.message.encode(),a.p,a.g,h,a.backend); print('Ciphertext:',c)
-            print('Recovered:',bytes(elgamal_decrypt(c,a.p,a.x,a.backend)).decode())
-        elif a.algorithm=='ecc':
-            x,y=secrets.randbelow(N-1)+1,secrets.randbelow(N-1)+1
-            q=multiply(y,backend=a.backend)
-            secret=ecdh(x,q,a.backend); assert secret==ecdh(y,multiply(x,backend=a.backend),a.backend)
-            c=seal(a.message.encode(),secret,a.backend); print('Envelope:',c.hex()); print('Recovered:',unseal(c,secret,a.backend).decode())
-        elif a.algorithm=='dh':
-            from time import perf_counter
-            t=perf_counter(); x,y=secrets.randbelow(DH_P-4)+2,secrets.randbelow(DH_P-4)+2
-            X,Y=modexp(2,x,DH_P,a.backend),modexp(2,y,DH_P,a.backend); generated=perf_counter()-t
-            t=perf_counter(); s=dh_shared(x,Y,backend=a.backend); other=dh_shared(y,X,backend=a.backend); elapsed=perf_counter()-t
-            assert s==other
-            print('Shared secrets match:',True,'keygen seconds:',generated,'exchange seconds:',elapsed)
-            print('Derived key fingerprint:',hashlib.sha256(hkdf(s.to_bytes(256,'big'))).hexdigest())
-        elif a.algorithm=='rabin':
-            key=rabin_key(a.bits,a.backend); m=int.from_bytes(a.message.encode(),'big')
-            if m>=key['n']: raise ValueError('Message too large; use a larger key or hybrid')
-            c=pow(m,2,key['n']); roots=rabin_roots(c,key['p'],key['q'])
-            print('Ciphertext:',c,'\nFour candidate integers:',roots,'\nOriginal is among roots:',m in roots)
-        else:
-            if a.backend=='lib':
-                from sympy import factorint
-                factors=factorint(a.n,limit=a.limit)
-                if len(factors)!=2 or any(v!=1 or not prime(int(k)) for k,v in factors.items()): raise ValueError('Need two distinct prime factors')
-                u,v=map(int,factors)
-            else: u,v=factor(a.n,a.method,a.limit)
-            if not prime(u) or not prime(v) or u==v: raise ValueError('Recovered factors are not two distinct primes')
-            print('p, q:',u,v,'private d:',pow(a.e,-1,(u-1)*(v-1)))
-    except (ValueError,OverflowError,UnicodeDecodeError) as e: p.error(str(e))
+                print("Invalid choice.")
+        except (ValueError, OverflowError, UnicodeDecodeError) as exc:
+            print(f"Could not run example: {exc}")
 
 
 if __name__=='__main__': main()

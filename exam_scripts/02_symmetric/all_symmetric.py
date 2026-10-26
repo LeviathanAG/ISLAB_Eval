@@ -1,5 +1,4 @@
-"""DES/3DES/AES from scratch or PyCryptodome; ECB/CBC/CFB(full block)/OFB/CTR."""
-import argparse
+"""Menu-driven copy of the complete Lab 2 block-cipher toolkit."""
 
 
 def xor(a, b):
@@ -257,40 +256,31 @@ def crypt(data,key,algorithm='AES',mode='CBC',decrypt=False,iv=None,nonce=b'',co
 
 
 def main():
-    """Command-line wrapper; run with --help to see every modifiable option."""
-    p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('algorithm',choices=['AES','DES','3DES'])
-    p.add_argument('text',nargs='?')
-    p.add_argument('--key',required=True,help='UTF-8 by default, hexadecimal with --key-hex')
-    p.add_argument('--key-hex',action='store_true')
-    p.add_argument('--input-hex',action='store_true')
-    p.add_argument('--mode',choices=['ECB','CBC','CFB','OFB','CTR'],default='ECB')
-    p.add_argument('--iv',help='IV in hexadecimal')
-    p.add_argument('--nonce',default='',help='CTR nonce in hexadecimal')
-    p.add_argument('--counter',type=int,default=0)
-    p.add_argument('--decrypt',action='store_true',help='Ciphertext input is hexadecimal')
-    p.add_argument('--no-padding',action='store_true')
-    p.add_argument('--trace',action='store_true',help='AES encryption: print each block and round')
-    p.add_argument('--backend',choices=['pure','lib'],default='pure')
-    a = p.parse_args()
-    try:
-        message = a.text if a.text is not None else input('Message (hex if decrypting): ')
-        data = bytes.fromhex(message) if a.decrypt or a.input_hex else message.encode()
-        key = bytes.fromhex(a.key) if a.key_hex else a.key.encode()
-        iv = bytes.fromhex(a.iv) if a.iv else None
-        nonce = bytes.fromhex(a.nonce)
-        if a.trace:
-            if a.algorithm!='AES' or a.decrypt or a.mode!='ECB': raise ValueError('Trace uses AES ECB encryption; trace CBC pre-XOR separately')
-            padded = data if a.no_padding else pad(data,16)
-            for i in range(0,len(padded),16):
-                steps=[]
-                AES(key).encrypt(padded[i:i+16],steps)
-                print('block',i//16,'input',padded[i:i+16].hex())
-                for name,value in steps: print(name,value)
-        result = crypt(data,key,a.algorithm,a.mode,a.decrypt,iv,nonce,a.counter,a.backend,not a.no_padding)
-        print('Output hex:',result.hex())
-        if a.decrypt: print('Output UTF-8:',result.decode('utf-8',errors='replace'))
-    except ValueError as e: p.error(str(e))
+    """Run one round-trip with fixed educational keys."""
+
+    while True:
+        print("\n=== Lab 2 block ciphers ===")
+        print("1. AES-CBC  2. DES-CBC  3. 3DES-ECB  0. Exit")
+        choice = input("Choose an example: ").strip()
+        if choice == "0" or not choice:
+            return
+        settings = {
+            "1": ("AES", b"K" * 16, "CBC", b"I" * 16),
+            "2": ("DES", b"A1B2C3D4", "CBC", b"12345678"),
+            "3": ("3DES", b"12345678" * 3, "ECB", None),
+        }
+        selected = settings.get(choice)
+        if selected is None:
+            print("Invalid choice.")
+            continue
+        algorithm, key, mode, iv = selected
+        message = input("Message (Enter uses a sample): ") or "Information Security"
+        try:
+            ciphertext = crypt(message.encode(), key, algorithm, mode, iv=iv)
+            print("Ciphertext:", ciphertext.hex())
+            print("Recovered:", crypt(ciphertext, key, algorithm, mode, decrypt=True, iv=iv).decode())
+        except ValueError as exc:
+            print(f"Could not run example: {exc}")
 
 
 if __name__=='__main__': main()

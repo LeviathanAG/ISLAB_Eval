@@ -1,8 +1,6 @@
 """One entry point for every lab's intermediate-output demonstration."""
 from __future__ import annotations
 
-import argparse
-
 import lab01_classical_trace
 import lab02_block_trace
 import lab03_public_key_trace
@@ -22,14 +20,26 @@ LABS = {
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Print IS-lab intermediate steps")
-    choice = parser.add_mutually_exclusive_group(required=True)
-    choice.add_argument("--lab", type=int, choices=LABS, help="trace one lab")
-    choice.add_argument("--all", action="store_true", help="trace Labs 1 through 6")
-    arguments = parser.parse_args()
-    selected = sorted(LABS) if arguments.all else [arguments.lab]
-    for number in selected:
-        LABS[number]()
+    """Print one lab trace, or every trace, from a menu."""
+
+    while True:
+        print("\n=== Intermediate traces ===")
+        for number in sorted(LABS):
+            print(f"{number}. Lab {number}")
+        print("7. Run every trace")
+        print("0. Exit")
+        choice = input("Choose a trace: ").strip()
+        if choice == "0" or not choice:
+            return
+        if choice == "7":
+            selected = sorted(LABS)
+        elif choice.isdigit() and int(choice) in LABS:
+            selected = [int(choice)]
+        else:
+            print("Invalid choice.")
+            continue
+        for number in selected:
+            LABS[number]()
 
 
 if __name__ == "__main__":

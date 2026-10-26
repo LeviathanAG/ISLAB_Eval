@@ -1,5 +1,4 @@
-"""Measured CSVs and plots, with round-trip validation outside timed sections."""
-import argparse
+"""Menu-driven timing benchmarks with round-trip validation."""
 import csv
 import statistics
 import time
@@ -95,19 +94,25 @@ def file_benchmark(backend='lib',sizes=(1024,10240,1048576,10485760),repeats=3,a
 
 
 def main():
-    """Read command-line choices; run with --help for modifiable arguments."""
-    p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('kind',choices=['symmetric','files'])
-    p.add_argument('--backend',choices=['pure','lib'],default='lib')
-    p.add_argument('--repeats',type=int,default=3)
-    p.add_argument('--sizes',default='1024,10240,1048576,10485760')
-    p.add_argument('--algorithms',default='rsa,ecc,ec-elgamal')
-    p.add_argument('--output')
-    a=p.parse_args()
-    try:
-        if a.kind=='symmetric': symmetric_benchmark(a.backend,a.repeats,a.output or f'results/symmetric_{a.backend}.csv')
-        else: file_benchmark(a.backend,tuple(map(int,a.sizes.split(','))),a.repeats,tuple(a.algorithms.split(',')),a.output or f'results/files_{a.backend}.csv')
-    except ValueError as e: p.error(str(e))
+    """Run a quick benchmark from a menu."""
+
+    while True:
+        print("\n=== Timing menu ===")
+        print("1. Symmetric ciphers  2. Hybrid files  0. Exit")
+        choice = input("Choose a benchmark: ").strip()
+        if choice == "0" or not choice:
+            return
+        try:
+            repeats = int(input("Repeats (Enter uses 3): ") or "3")
+            if choice == "1":
+                symmetric_benchmark("pure", repeats)
+            elif choice == "2":
+                sizes = tuple(int(value) for value in (input("Sizes in bytes (Enter uses 1024,10240): ") or "1024,10240").split(","))
+                file_benchmark("pure", sizes, repeats)
+            else:
+                print("Invalid choice.")
+        except (ValueError, OSError) as exc:
+            print(f"Benchmark could not run: {exc}")
 
 
 if __name__=='__main__': main()

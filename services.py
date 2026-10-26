@@ -1,7 +1,4 @@
-"""Lab 4 centralized KMS and DRM: encrypted SQLite keys, API tokens, expiry and audit.
-Runnable demos use temporary databases. Optional HTTPS API requires your TLS certificate.
-"""
-import argparse
+"""Small Lab 4 key-management, DRM, and access-control demonstrations."""
 import base64
 import hashlib
 import hmac
@@ -11,6 +8,7 @@ import sqlite3
 import tempfile
 import time
 from pathlib import Path
+from types import SimpleNamespace
 import hybrid
 from public_key import (DH_P, dh_shared, modexp, sign, verify, hkdf, seal, unseal)
 
@@ -281,29 +279,57 @@ def serve(args):
 
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('scenario',choices=['securecorp','healthcare','drm','init','serve'])
-    p.add_argument('--backend',choices=['pure','lib'],default='lib')
-    p.add_argument('--bits',type=int)
-    p.add_argument('--database',default='kms.sqlite'); p.add_argument('--master-file',default='kms.master')
-    p.add_argument('--cert'); p.add_argument('--tls-key'); p.add_argument('--port',type=int,default=8443)
-    p.add_argument('--renew-token-file'); p.add_argument('--lifetime-days',type=int,default=365)
-    a=p.parse_args()
-    try:
-        if a.scenario=='securecorp': securecorp(a.backend)
-        elif a.scenario=='healthcare': healthcare(a.backend,a.bits or 1024)
-        elif a.scenario=='drm': drm(a.backend,a.bits or 2048)
-        elif a.scenario=='init':
-            if Path(a.database).exists(): raise ValueError('Use a new database path')
-            master=secrets.token_bytes(32); hybrid.write_new(a.master_file,master,True)
-            svc=KeyService(a.database,master,a.backend); token=svc.bootstrap(); svc.close()
-            Path(a.database).chmod(0o600)
-            hybrid.write_new(a.master_file+'.admin-token',token.encode(),True)
-            print('Initialized. Admin token saved to',a.master_file+'.admin-token','(keep separate from database).')
-        else:
-            if not a.cert or not a.tls_key: raise ValueError('HTTPS requires --cert and --tls-key; do not disable client certificate verification')
-            serve(a)
-    except (ValueError,PermissionError,OSError) as e: p.error(str(e))
+    """Run the Lab 4 scenarios from a menu instead of command-line flags."""
+
+    while True:
+        print("\n=== Key-management menu ===")
+        print("1. SecureCorp RSA/DH system")
+        print("2. Healthcare Rabin KMS")
+        print("3. ElGamal DRM")
+        print("4. Initialize a persistent KMS")
+        print("5. Start the HTTPS KMS service")
+        print("0. Exit")
+        choice = input("Choose a scenario: ").strip()
+        if choice == "0" or not choice:
+            return
+        try:
+            if choice == "1":
+                securecorp()
+            elif choice == "2":
+                healthcare()
+            elif choice == "3":
+                drm()
+            elif choice == "4":
+                database = input("Database path (Enter uses kms.sqlite): ") or "kms.sqlite"
+                master_file = input("Master-key path (Enter uses kms.master): ") or "kms.master"
+                if Path(database).exists() or Path(master_file).exists():
+                    raise ValueError("Choose new paths; existing files are never overwritten")
+                master = secrets.token_bytes(32)
+                hybrid.write_new(master_file, master, True)
+                service = KeyService(database, master)
+                token = service.bootstrap()
+                service.close()
+                Path(database).chmod(0o600)
+                hybrid.write_new(master_file + ".admin-token", token.encode(), True)
+                print("KMS initialized. Keep the master key and admin token separate.")
+            elif choice == "5":
+                args = SimpleNamespace(
+                    database=input("Database path: ").strip(),
+                    master_file=input("Master-key path: ").strip(),
+                    backend="pure",
+                    cert=input("TLS certificate path: ").strip(),
+                    tls_key=input("TLS private-key path: ").strip(),
+                    port=8443,
+                    renew_token_file=None,
+                    lifetime_days=365,
+                )
+                if not args.database or not args.master_file or not args.cert or not args.tls_key:
+                    raise ValueError("All service paths are required")
+                serve(args)
+            else:
+                print("Invalid choice.")
+        except (ValueError, PermissionError, OSError) as exc:
+            print(f"Scenario could not run: {exc}")
 
 
 if __name__=='__main__': main()

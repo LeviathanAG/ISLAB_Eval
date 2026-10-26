@@ -1,7 +1,4 @@
-"""Likely evaluation modifications and attack demonstrations; --list names all cases.
-These controlled examples use locally generated data. Edit parameters or import functions.
-"""
-import argparse
+"""Controlled variations and attack demonstrations for exam revision."""
 import hashlib
 import hmac
 import secrets
@@ -248,14 +245,28 @@ def run(name,backend='pure',text=None,key=None):
 
 
 def main():
-    parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('case',nargs='?',choices=CASES); parser.add_argument('--list',action='store_true'); parser.add_argument('--all',action='store_true')
-    parser.add_argument('--backend',choices=['pure','lib'],default='pure'); parser.add_argument('--text'); parser.add_argument('--key')
-    args=parser.parse_args()
-    if args.list or not args.case and not args.all:
-        for k,v in CASES.items(): print(k,v)
-    else:
-        for case in CASES if args.all else [args.case]: run(case,args.backend,args.text,args.key)
+    """Choose one variation or run every variation from a menu."""
+
+    while True:
+        print("\n=== Exam variations ===")
+        for key, title in CASES.items():
+            print(f"{key}: {title}")
+        print("ALL: run every variation")
+        print("0: exit")
+        choice = input("Choose a case: ").strip()
+        if choice == "0" or not choice:
+            return
+        cases = list(CASES) if choice.upper() == "ALL" else [choice]
+        if choice.upper() != "ALL" and choice not in CASES:
+            print("Invalid choice.")
+            continue
+        text = input("Optional text (Enter for the example): ") or None
+        key = input("Optional key (Enter for the example): ") or None
+        for case in cases:
+            try:
+                run(case, "pure", text, key)
+            except (ValueError, AssertionError) as exc:
+                print(f"{case} failed: {exc}")
 
 
 if __name__=='__main__': main()

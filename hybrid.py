@@ -1,10 +1,9 @@
-"""Authenticated hybrid file encryption with RSA, ECC, EC-ElGamal, ElGamal or Rabin.
-JSON header + salt + nonce + ciphertext + HMAC; header is authenticated.
-"""
-import argparse
+"""Menu-friendly authenticated hybrid encryption for files and byte strings."""
 import json
 import secrets
 import struct
+import hashlib
+from getpass import getpass
 from pathlib import Path
 from public_key import (DH_P, N, multiply, validate_point, ecdh, ec_add, rsa_key,
                         rabin_key, rabin_roots, oaep_encrypt, oaep_decrypt, seal,
@@ -110,35 +109,51 @@ def write_new(path,data,private=False):
 
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('action',choices=['keygen','encrypt','decrypt'])
-    p.add_argument('--algorithm',choices=['rsa','ecc','ec-elgamal','elgamal','rabin'],default='rsa')
-    p.add_argument('--backend',choices=['pure','lib'],default='pure')
-    p.add_argument('--bits',type=int,default=2048)
-    p.add_argument('--key',required=True,help='Key JSON path; private keys are password encrypted')
-    p.add_argument('--input'); p.add_argument('--output')
-    a=p.parse_args()
-    try:
-        import getpass,hashlib
-        if a.action=='keygen':
-            key=keygen(a.algorithm,a.backend,a.bits)
-            password=getpass.getpass('New private-key password: ')
-            if not password: raise ValueError('Password cannot be empty')
-            salt=secrets.token_bytes(16)
-            master=hashlib.scrypt(password.encode(),salt=salt,n=2**14,r=8,p=1)
-            write_new(a.key,salt+seal(encode(key),master,a.backend),True)
-            write_new(a.key+'.pub',encode(public(key)))
-            print('Saved encrypted private key and',a.key+'.pub')
-        else:
-            if not a.input or not a.output: raise ValueError('--input and --output required')
-            data=Path(a.input).read_bytes(); raw=Path(a.key).read_bytes()
-            if a.action=='encrypt': key=json.loads(raw); out=encrypt(data,key,a.backend)
+    """Create keys or encrypt/decrypt files through a simple menu."""
+
+    while True:
+        print("\n=== Hybrid encryption ===")
+        print("1. Create a key pair")
+        print("2. Encrypt a file")
+        print("3. Decrypt a file")
+        print("0. Exit")
+        choice = input("Choose an action: ").strip()
+        if choice == "0" or not choice:
+            return
+        try:
+            if choice == "1":
+                algorithm = input("Algorithm (rsa/ecc/ec-elgamal/elgamal/rabin): ").strip() or "rsa"
+                path = input("Private-key path: ").strip() or "private.key"
+                key = keygen(algorithm)
+                password = getpass("New private-key password: ")
+                if not password:
+                    raise ValueError("Password cannot be empty")
+                salt = secrets.token_bytes(16)
+                master = hashlib.scrypt(password.encode(), salt=salt, n=2**14, r=8, p=1)
+                write_new(path, salt + seal(encode(key), master), True)
+                write_new(path + ".pub", encode(public(key)))
+                print("Saved:", path, "and", path + ".pub")
+            elif choice in {"2", "3"}:
+                default_key = "private.key.pub" if choice == "2" else "private.key"
+                key_path = input(f"Key path (Enter uses {default_key}): ").strip() or default_key
+                input_path = input("Input file: ").strip()
+                output_path = input("Output file: ").strip()
+                if not input_path or not output_path:
+                    raise ValueError("Input and output paths are required")
+                data = Path(input_path).read_bytes()
+                raw = Path(key_path).read_bytes()
+                if choice == "2":
+                    result = encrypt(data, json.loads(raw))
+                else:
+                    password = getpass("Private-key password: ")
+                    master = hashlib.scrypt(password.encode(), salt=raw[:16], n=2**14, r=8, p=1)
+                    result = decrypt(data, json.loads(unseal(raw[16:], master)))
+                write_new(output_path, result)
+                print("Wrote", len(result), "bytes")
             else:
-                password=getpass.getpass('Private-key password: ')
-                master=hashlib.scrypt(password.encode(),salt=raw[:16],n=2**14,r=8,p=1)
-                key=json.loads(unseal(raw[16:],master,a.backend)); out=decrypt(data,key,a.backend)
-            write_new(a.output,out); print('Wrote',len(out),'bytes to',a.output)
-    except (ValueError,KeyError,OSError,OverflowError) as e: p.error(str(e))
+                print("Invalid choice.")
+        except (ValueError, KeyError, OSError, OverflowError) as exc:
+            print(f"Could not complete action: {exc}")
 
 
 if __name__=='__main__': main()
